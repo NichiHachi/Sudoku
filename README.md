@@ -39,4 +39,4 @@ sudoku/
 └── LICENSE
 ```
 
-![class-diagram](https://github.com/user-attachments/assets/7e4fc5dd-3b2e-4cd8-b45c-efa6390c0ff9)
+![class-diagram](https://mermaid.ink/svg/pako:eNptUl1vgyAU_SvkPqtxtVVrl710y_bSZFnfNvdAlLYmCAZw6Uf87wMGxi6-APfcc8-5XLhBxWsCBVQUS_nc4KPAbckQQhZAr6KpbzZG4ZZQ-vWNKr3JjcWGkk24Ju-571w2quEMde6wcYkXSlrCFPrBtCce3HImlcANU0Z_DOZdxrT3-uSMoKtevNxHTwkSepmrN-z_XWpX3-espxH0NW9Ynna4Q742fJqoGFOpszManuV1kL4BOgeXOT83pJG6V6Jhx-nMPN-8D-JhaIdvEXNAjwYZB_WHj6HJminMwPamE5koGvu-R12HFrTz1-Ad077BtB4CaIlocVPr32ZvVoI6aZUSCn2syQH3VJVQskFTca_4_sIqKJToSQB9V2NF3P-E4oCp1CipG8XFzv1gswXQYQbFDc5QpIs4ytd5nC3TLF6kqyyACxSL5TLK0mSdr_LkIV0nyRDAlXMtGkcrW_5pI2cheH88uWj4BSQCBqw)
