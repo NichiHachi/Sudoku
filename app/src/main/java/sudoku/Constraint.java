@@ -1,20 +1,12 @@
 package sudoku;
 
 public class Constraint {
-    private Zone zone;
     private Rule rule;
+    private final int id;
 
-    public Constraint(Zone zone, Rule rule) {
-        this.zone = zone;
+    public Constraint(Rule rule, int id) {
         this.rule = rule;
-    }
-
-    public Zone getZone() {
-        return zone;
-    }
-
-    public void setZone(Zone zone) {
-        this.zone = zone;
+        this.id = id;
     }
 
     public Rule getRule() {
@@ -24,4 +16,9 @@ public class Constraint {
     public void setRule(Rule rule) {
         this.rule = rule;
     }
+
+    public int getId() {
+        return id;
+    }
+
 }

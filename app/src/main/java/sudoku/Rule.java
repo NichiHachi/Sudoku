@@ -3,17 +3,17 @@ package sudoku;
 import java.util.HashMap;
 
 public class Rule {
-    private HashMap<Element, Element[]> rulesMap;
+    private HashMap<String, String[]> rulesMap;
 
-    public Rule(HashMap<Element, Element[]> rulesMap) {
+    public Rule(HashMap<String, String[]> rulesMap) {
         this.rulesMap = rulesMap;
     }
 
-    public HashMap<Element, Element[]> getRulesMap() {
+    public HashMap<String, String[]> getRulesMap() {
         return rulesMap;
     }
 
-    public void setRulesMap(HashMap<Element, Element[]> rulesMap) {
+    public void setRulesMap(HashMap<String, String[]> rulesMap) {
         this.rulesMap = rulesMap;
     }
 }
