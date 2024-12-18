@@ -3,12 +3,12 @@ package sudoku;
 public class Cell {
     private Position position;
     private Element element;
-    private Constraint[] constraints;
+    private int[] idConstraint;
 
-    public Cell(Position position, Element element, Constraint[] constraints) {
+    public Cell(Position position, Element element, int[] idConstraint) {
         this.position = position;
         this.element = element;
-        this.constraints = constraints;
+        this.idConstraint = idConstraint;
     }
 
     public Position getPosition() {
@@ -27,12 +27,12 @@ public class Cell {
         this.element = element;
     }
 
-    public Constraint[] getConstraints() {
-        return constraints;
+    public int[] getIdConstraints() {
+        return idConstraint;
     }
 
-    public void setConstraints(Constraint[] constraints) {
-        this.constraints = constraints;
+    public void setIdConstraints(int[] idConstraint) {
+        this.idConstraint = idConstraint;
     }
 
 }
