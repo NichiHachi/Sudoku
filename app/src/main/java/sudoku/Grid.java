@@ -22,14 +22,6 @@ public class Grid {
 
         initConstraints(blockHeight, blockWidth, rules);
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int blockIndex = (i / blockHeight) * blockWidth + (j / blockWidth);
-                cells[i][j] = new Cell(new Position(i, j), new Element("_"),
-                        new int[] { blockConstraints[blockIndex].getId(), lineConstraints[i].getId(),
-                                columnConstrains[j].getId() });
-            }
-        }
     }
 
     public HashMap<String, String[]> initRules() {
@@ -62,6 +54,15 @@ public class Grid {
         for (int i = 0; i < size; i++) {
             lineConstraints[i] = new Constraint(new Rule(rules), idCounter++);
             columnConstrains[i] = new Constraint(new Rule(rules), idCounter++);
+        }
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int blockIndex = (i / blockHeight) * blockWidth + (j / blockWidth);
+                cells[i][j] = new Cell(new Position(i, j), new Element("_"),
+                        new int[] { blockConstraints[blockIndex].getId(), lineConstraints[i].getId(),
+                                columnConstrains[j].getId() });
+            }
         }
     }
 
