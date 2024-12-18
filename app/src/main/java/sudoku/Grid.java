@@ -8,7 +8,7 @@ public class Grid {
     private Cell[][] cells;
     private final int size;
     private int idCounter = 0;
-    Constraint[][] blockConstraints;
+    Constraint[] blockConstraints, lineConstraints, columnConstrains;
 
     public Grid(int size) {
         this.size = size;
@@ -17,34 +17,76 @@ public class Grid {
         List<Integer> factors = primeFactors(size);
         int blockHeight = factors.get(0);
         int blockWidth = factors.get(1);
-        blockConstraints = new Constraint[blockHeight][blockWidth];
+
+        HashMap<String, String[]> rules = initRules();
+
+        initConstraints(blockHeight, blockWidth, rules);
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int blockIndex = (i / blockHeight) * blockWidth + (j / blockWidth);
+                cells[i][j] = new Cell(new Position(i, j), new Element("_"),
+                        new int[] { blockConstraints[blockIndex].getId(), lineConstraints[i].getId(),
+                                columnConstrains[j].getId() });
+            }
+        }
+    }
+
+    public HashMap<String, String[]> initRules() {
+        HashMap<String, String[]> rules = new HashMap<>();
+        for (int i = 1; i <= size; i++) {
+            String[] eltWithouti = new String[size - 1];
+            int index = 0;
+            for (int j = 1; j <= size; j++) {
+                if (j != i) {
+                    eltWithouti[index] = String.valueOf(j);
+                    index++;
+                }
+            }
+            rules.put(String.valueOf(i), eltWithouti);
+        }
+        return rules;
+    }
+
+    public void initConstraints(int blockHeight, int blockWidth, HashMap<String, String[]> rules) {
+        blockConstraints = new Constraint[blockHeight * blockWidth];
+        lineConstraints = new Constraint[size];
+        columnConstrains = new Constraint[size];
 
         for (int blockRow = 0; blockRow < blockHeight; blockRow++) {
             for (int blockCol = 0; blockCol < blockWidth; blockCol++) {
-                HashMap<String, String[]> rules = new HashMap<>();
-                blockConstraints[blockRow][blockCol] = new Constraint(new Rule(rules), idCounter);
-                idCounter++;
+                blockConstraints[blockCol + blockRow * blockWidth] = new Constraint(new Rule(rules), idCounter++);
             }
         }
 
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int blockRow = i / blockWidth;
-                int blockCol = j / blockHeight;
-                Constraint constraint = blockConstraints[blockRow][blockCol];
-                cells[i][j] = new Cell(new Position(i, j), new Element("_"), constraint.getId());
-            }
+            lineConstraints[i] = new Constraint(new Rule(rules), idCounter++);
+            columnConstrains[i] = new Constraint(new Rule(rules), idCounter++);
         }
     }
 
     public static List<Integer> primeFactors(int number) {
         List<Integer> factors = new ArrayList<>();
-        for (int i = 2; i <= number; i++) {
+        for (int i = 2; i <= Math.sqrt(number); i++) {
             while (number % i == 0) {
                 factors.add(i);
                 number /= i;
             }
         }
+        if (number > 1) {
+            factors.add(number);
+        }
+
+        while (factors.size() > 2) {
+            int a = factors.remove(0);
+            int b = factors.remove(0);
+            factors.add(a * b);
+        }
+
+        if (factors.size() == 1) {
+            factors.add(1);
+        }
+
         return factors;
     }
 
@@ -78,7 +120,7 @@ public class Grid {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                int constraintId = cells[i][j].getIdConstraints();
+                int constraintId = cells[i][j].getIdConstraints()[0];
                 String color = colors[constraintId % colors.length];
                 System.out.print(color + cells[i][j].getElement().getValue() + " " + resetColor);
             }

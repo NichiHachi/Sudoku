@@ -9,7 +9,7 @@ public class Sudoku {
 
     public static void main(String[] args) {
         Sudoku sudoku = new Sudoku();
-        sudoku.grid = new Grid(10);
+        sudoku.grid = new Grid(9);
         sudoku.grid.show();
     }
 }
