@@ -1,38 +1,52 @@
 package sudoku;
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 public class Cell {
-    private Position position;
-    private Element element;
-    private int[] idConstraint;
+    private String value;
+    private ArrayList<Integer> idRules;
 
-    public Cell(Position position, Element element, int[] idConstraint) {
-        this.position = position;
-        this.element = element;
-        this.idConstraint = idConstraint;
+    public Cell(ArrayList<Integer> idRules) {
+        this.idRules = idRules;
     }
 
-    public Position getPosition() {
-        return position;
+    public Cell(Integer idRule){
+        this.idRules = new ArrayList<>(idRule);
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public Cell() {
+        this.idRules = new ArrayList<>();
     }
 
-    public Element getElement() {
-        return element;
+    public void addRule(Integer idRule) {
+        this.idRules.add(idRule);
     }
 
-    public void setElement(Element element) {
-        this.element = element;
+    // Maybe we will never use it
+    public void deleteRule(Integer idRule) {
+        this.idRules.remove(idRule);
     }
 
-    public int[] getIdConstraints() {
-        return idConstraint;
+    public void placeValue(String value) {
+        if (this.value != null) {
+            System.err.println("Cell: A value is already inside of the grid (" + this.value + ")");
+        }
+        this.value = value;
     }
 
-    public void setIdConstraints(int[] idConstraint) {
-        this.idConstraint = idConstraint;
+    public String getValue() {
+        return this.value;
     }
 
+    public ArrayList<Integer> getIdRules() {
+        return this.idRules;
+    }
+
+    public int getNumberOfRules(){
+        return this.idRules.size();
+    }
 }

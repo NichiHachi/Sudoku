@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'sudoku.Sudoku'
+    mainClass = 'sudoku.Main'
 }
 
 tasks.named('test') {

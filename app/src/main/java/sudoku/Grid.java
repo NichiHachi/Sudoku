@@ -1,132 +1,98 @@
 package sudoku;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Grid {
-    private Cell[][] cells;
-    private final int size;
-    private int idCounter = 0;
-    Constraint[] blockConstraints, lineConstraints, columnConstrains;
+    ArrayList<Rule> rules;
+    Position size;
+    Cell[][] gridCell;
 
-    public Grid(int size) {
-        this.size = size;
-        this.cells = new Cell[size][size];
+    public Grid(ArrayList<Sudoku> sudokus) {
+        // Init the size of the Grid
+        // Get the min and max Position between each Sudoku for index and size purpose
+        Position minPos = sudokus.getFirst().getMinPosition();
+        Position maxPos = sudokus.getFirst().getMaxPosition();
+        for (Sudoku sudoku : sudokus) {
+            minPos = minPos.min(sudoku.getMinPosition());
+            maxPos = maxPos.max(sudoku.getMaxPosition());
+        }
+        Position resizeVector = minPos.negative();
+        this.size = maxPos.add(resizeVector);
 
-        List<Integer> factors = primeFactors(size);
-        int blockHeight = factors.get(0);
-        int blockWidth = factors.get(1);
+        this.gridCell = new Cell[this.size.getY()][this.size.getX()];
 
-        HashMap<String, String[]> rules = initRules();
-
-        initConstraints(blockHeight, blockWidth, rules);
-
-    }
-
-    public HashMap<String, String[]> initRules() {
-        HashMap<String, String[]> rules = new HashMap<>();
-        for (int i = 1; i <= size; i++) {
-            String[] eltWithouti = new String[size - 1];
-            int index = 0;
-            for (int j = 1; j <= size; j++) {
-                if (j != i) {
-                    eltWithouti[index] = String.valueOf(j);
-                    index++;
+        // Init the rules
+        ArrayList<Set<Position>> rulesPositions = new ArrayList<>();
+        this.rules = new ArrayList<>();
+        for (Sudoku sudoku : sudokus) {
+            for (int i=0; i<sudoku.getNumberRule(); i++) {
+                Set<Position> ruleAbsolutePositions = adjustPositions(sudoku.getRulePositions(i), resizeVector);
+                Rule rule = sudoku.getRule(i);
+                int index = rulesPositions.indexOf(ruleAbsolutePositions);
+                if (index == -1) {
+                    rulesPositions.add(ruleAbsolutePositions);
+                    this.rules.add(rule);
+                } else {
+                    this.rules.get(index).mergingRule(rule);
                 }
             }
-            rules.put(String.valueOf(i), eltWithouti);
-        }
-        return rules;
-    }
-
-    public void initConstraints(int blockHeight, int blockWidth, HashMap<String, String[]> rules) {
-        blockConstraints = new Constraint[blockHeight * blockWidth];
-        lineConstraints = new Constraint[size];
-        columnConstrains = new Constraint[size];
-
-        for (int blockRow = 0; blockRow < blockHeight; blockRow++) {
-            for (int blockCol = 0; blockCol < blockWidth; blockCol++) {
-                blockConstraints[blockCol + blockRow * blockWidth] = new Constraint(new Rule(rules), idCounter++);
-            }
         }
 
-        for (int i = 0; i < size; i++) {
-            lineConstraints[i] = new Constraint(new Rule(rules), idCounter++);
-            columnConstrains[i] = new Constraint(new Rule(rules), idCounter++);
-        }
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int blockIndex = (i / blockHeight) * blockWidth + (j / blockWidth);
-                cells[i][j] = new Cell(new Position(i, j), new Element("_"),
-                        new int[] { blockConstraints[blockIndex].getId(), lineConstraints[i].getId(),
-                                columnConstrains[j].getId() });
+        // Init Cells in the gridCell
+        for(int i=0; i<rulesPositions.size(); i++){
+            for(Position pos : rulesPositions.get(i)){
+                int x = pos.getX();
+                int y = pos.getY();
+                if(this.gridCell[y][x] == null){
+                    this.gridCell[y][x] = new Cell(i);
+                } else {
+                    this.gridCell[y][x].addRule(i);
+                }
             }
         }
     }
 
-    public static List<Integer> primeFactors(int number) {
-        List<Integer> factors = new ArrayList<>();
-        for (int i = 2; i <= Math.sqrt(number); i++) {
-            while (number % i == 0) {
-                factors.add(i);
-                number /= i;
-            }
-        }
-        if (number > 1) {
-            factors.add(number);
-        }
-
-        while (factors.size() > 2) {
-            int a = factors.remove(0);
-            int b = factors.remove(0);
-            factors.add(a * b);
-        }
-
-        if (factors.size() == 1) {
-            factors.add(1);
-        }
-
-        return factors;
-    }
-
-    public Cell[][] getCells() {
-        return cells;
-    }
-
-    public void setCells(Cell[][] cells) {
-        this.cells = cells;
-    }
-
-    public void show() {
-        String[] colors = {
-                "\u001B[31m", // Rouge
-                "\u001B[32m", // Vert
-                "\u001B[33m", // Jaune
-                "\u001B[34m", // Bleu
-                "\u001B[35m", // Magenta
-                "\u001B[36m", // Cyan
-                "\u001B[37m", // Blanc
-                "\u001B[90m", // Gris
-                "\u001B[91m", // Rouge clair
-                "\u001B[92m", // Vert clair
-                "\u001B[93m", // Jaune clair
-                "\u001B[94m", // Bleu clair
-                "\u001B[95m", // Magenta clair
-                "\u001B[96m", // Cyan clair
-                "\u001B[97m" // Blanc clair
-        };
-        String resetColor = "\u001B[0m";
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int constraintId = cells[i][j].getIdConstraints()[0];
-                String color = colors[constraintId % colors.length];
-                System.out.print(color + cells[i][j].getElement().getValue() + " " + resetColor);
+    public void print() {
+        for (Cell[] cellLine : this.gridCell) {
+            for (Cell cell : cellLine) {
+                if (cell == null) {
+                    System.out.print("  ");
+                } else {
+                    String color = getColor(cell.getNumberOfRules());
+                    System.out.print(color + (cell.getValue() != null ? cell.getValue() + " " : "- ") + "\u001B[0m");
+                }
             }
             System.out.println();
         }
     }
 
+    String getColor(int ruleCount) {
+        String[] colors = {
+                "\u001B[38;5;231m", // White
+                "\u001B[38;5;226m", // Yellow
+                "\u001B[38;5;220m", // Light Orange
+                "\u001B[38;5;214m", // Orange
+                "\u001B[38;5;208m", // Dark Orange
+                "\u001B[38;5;202m", // Red-Orange
+                "\u001B[38;5;196m", // Red
+                "\u001B[38;5;201m", // Magenta
+                "\u001B[38;5;93m",  // Light Purple
+                "\u001B[38;5;57m",  // Purple
+                "\u001B[38;5;21m",  // Blue
+                "\u001B[38;5;51m",  // Cyan
+                "\u001B[38;5;46m",  // Green
+                "\u001B[38;5;118m"  // Light Green
+        };
+        return colors[ruleCount % colors.length];
+    }
+
+    Set<Position> adjustPositions(Set<Position> positions, Position adjustPosition){
+        Set<Position> absolutePositions = new HashSet<>();
+        for(Position position : positions){
+            absolutePositions.add(position.add(adjustPosition));
+        }
+        return absolutePositions;
+    }
 }
