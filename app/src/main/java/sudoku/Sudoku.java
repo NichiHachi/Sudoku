@@ -10,26 +10,26 @@ import java.util.Set;
 public class Sudoku {
     ArrayList<Rule> rules;
     ArrayList<Set<Position>> rulesPosition;
-    Position absolutePosition;
+    Position offsetPosition;
     Position size;
 
-    public Sudoku(int size, Position absolutePosition){
+    public Sudoku(int size, Position offsetPosition){
         this.size = new Position(size);
-        this.absolutePosition = absolutePosition;
+        this.offsetPosition = offsetPosition;
         this.rules = new ArrayList<>();
         this.rulesPosition = new ArrayList<>();
     }
 
-    public Sudoku(int size, int diagonalAbsolutePosition){
-        this(size, new Position(diagonalAbsolutePosition));
+    public Sudoku(int size, int diagonalOffsetPosition){
+        this(size, new Position(diagonalOffsetPosition));
     }
 
     public Sudoku(int size){
         this(size, new Position(0));
     }
 
-    public Sudoku(int size, String[] values, Position caseSize, Position diagonalAbsolutePosition){
-        this(size, diagonalAbsolutePosition);
+    public Sudoku(int size, String[] values, Position caseSize, Position diagonalOffsetPosition){
+        this(size, diagonalOffsetPosition);
 
         if(values.length < size){
             System.err.println("[Sudoku] There are less value than there is columns and lines on the Sudoku");
@@ -45,12 +45,12 @@ public class Sudoku {
         this.initColumnsLines();
     }
 
-    public Sudoku(String[] values, Position absolutePosition){
-        this(values.length, values, new Position((int) Math.sqrt(values.length)), absolutePosition);
+    public Sudoku(String[] values, Position offsetPosition){
+        this(values.length, values, new Position((int) Math.sqrt(values.length)), offsetPosition);
     }
 
-    public Sudoku(String[] values, int diagonalAbsolutePosition){
-        this(values, new Position(diagonalAbsolutePosition));
+    public Sudoku(String[] values, int diagonalOffsetPosition){
+        this(values, new Position(diagonalOffsetPosition));
     }
 
     public Sudoku(String[] values){
@@ -70,11 +70,11 @@ public class Sudoku {
     }
 
     public Position getMinPosition(){
-        return this.absolutePosition;
+        return this.offsetPosition;
     }
 
     public Position getMaxPosition(){
-        return this.absolutePosition.add(this.size);
+        return this.offsetPosition.add(this.size);
     }
 
     private boolean isInsideOfSudoku(Position position){
@@ -91,7 +91,7 @@ public class Sudoku {
                 System.err.println("Sudoku: The position is outside of the Sudoku, cancel the addition of the rule.");
                 return;
             }
-            ruleAbsolutePos.add(pos.add(this.absolutePosition));
+            ruleAbsolutePos.add(pos.add(this.offsetPosition));
         }
         this.rulesPosition.add(ruleAbsolutePos);
     }

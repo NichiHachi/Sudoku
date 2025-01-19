@@ -44,6 +44,7 @@ classDiagram
     class Grid {
         - Cell[][] cells
         - Rule[] rules
+        - Position size
         + Grid(Sudoku[] sudokus)void
         + print()void
     }
@@ -51,9 +52,10 @@ classDiagram
     class Sudoku {
         - Rule[] rules
         - Position[] rulesPosition
-        - Position absolutePosition
+        - Position offsetPosition
         - Position size
-        + initWithNormalRule() void
+        + Sudoku(String[] values, Position offset)
+        + Sudoku(String[] values)
     }
     
     class Cell {
@@ -62,7 +64,14 @@ classDiagram
     }
     
     class Rule {
-        - HashMap String -> String[] rules
+        - HashMap String -> Set[String] rules
+        + Rule(String[])
+        + Rule(HashMap String -> Set[String])
+        + getPossibleMove() Set[String]
+        + add(String key, Set[String] value) void
+        + mergingRule(Rule rule) void
+        + isValid(String value) boolean
+        + placeValue(String value): boolean
     }
     
     class Position {
@@ -71,7 +80,7 @@ classDiagram
     }
 
     Grid o-- "1..*" Cell
-    Grid o-- "1..*" Sudoku
+    Grid --> "1..*" Sudoku
     Grid ..> Rule
     Sudoku ..> Rule
     Sudoku ..> Position

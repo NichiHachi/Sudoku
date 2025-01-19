@@ -58,8 +58,8 @@ public class Rule {
         }
     }
 
-    private boolean isValid(String key){
-        return rules.containsKey(key);
+    private boolean isValid(String value){
+        return rules.containsKey(value);
     }
 
     public boolean placeValue(String value){
