@@ -45,6 +45,10 @@ public class Position {
         return new Position(-this.x, -this.y);
     }
 
+    public String toString(){
+        return "(" + this.x + "," + this.y + ")";
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

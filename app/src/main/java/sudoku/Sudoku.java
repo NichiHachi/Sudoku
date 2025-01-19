@@ -13,32 +13,48 @@ public class Sudoku {
     Position absolutePosition;
     Position size;
 
-    public Sudoku(Position size, Position absolutePosition){
-        this.size = size;
+    public Sudoku(int size, Position absolutePosition){
+        this.size = new Position(size);
         this.absolutePosition = absolutePosition;
         this.rules = new ArrayList<>();
         this.rulesPosition = new ArrayList<>();
     }
 
-    public Sudoku(int squareSize, Position absolutePosition){
-        this.size = new Position(squareSize);
-        this.absolutePosition = absolutePosition;
-        this.rules = new ArrayList<>();
-        this.rulesPosition = new ArrayList<>();
+    public Sudoku(int size, int diagonalAbsolutePosition){
+        this(size, new Position(diagonalAbsolutePosition));
     }
 
-    public Sudoku(int squareSize, int diagonalAbsolutePosition){
-        this.size = new Position(squareSize);
-        this.absolutePosition = new Position(diagonalAbsolutePosition);
-        this.rules = new ArrayList<>();
-        this.rulesPosition = new ArrayList<>();
+    public Sudoku(int size){
+        this(size, new Position(0));
     }
 
-    public Sudoku(Position size, int diagonalAbsolutePosition){
-        this.size = size;
-        this.absolutePosition = new Position(diagonalAbsolutePosition);
-        this.rules = new ArrayList<>();
-        this.rulesPosition = new ArrayList<>();
+    public Sudoku(int size, String[] values, Position caseSize, Position diagonalAbsolutePosition){
+        this(size, diagonalAbsolutePosition);
+
+        if(values.length < size){
+            System.err.println("[Sudoku] There are less value than there is columns and lines on the Sudoku");
+            return;
+        }
+
+        if(size % caseSize.getX() > 0 || size % caseSize.getY() > 0){
+            System.err.println("[Sudoku] The size of each case " + caseSize + " can't build a Sudoku of size " + size);
+            return;
+        }
+
+        this.initWithValues(values, caseSize);
+        this.initColumnsLines();
+    }
+
+    public Sudoku(String[] values, Position absolutePosition){
+        this(values.length, values, new Position((int) Math.sqrt(values.length)), absolutePosition);
+    }
+
+    public Sudoku(String[] values, int diagonalAbsolutePosition){
+        this(values, new Position(diagonalAbsolutePosition));
+    }
+
+    public Sudoku(String[] values){
+        this(values, 0);
     }
 
     public ArrayList<Rule> getRules(){
@@ -96,5 +112,55 @@ public class Sudoku {
         int index = this.rules.indexOf(rule);
         this.rules.remove(index);
         this.rulesPosition.remove(index);
+    }
+
+    public void initColumnsLines(){
+        Set<String> values = new HashSet<>();
+        for(Rule rule : this.rules){
+            values.addAll(rule.getPossibleMove());
+        }
+        this.initColumnsLines(values.toArray(new String[0]));
+    }
+
+    private void initColumnsLines(String[] values){
+        for(int x=0; x<this.size.getX(); x++){
+            Rule rule = new Rule(values);
+
+            ArrayList<Position> positions = new ArrayList<>();
+            for(int y=0; y<this.size.getY(); y++){
+                positions.add(new Position(x,y));
+            }
+
+            this.add(rule, positions);
+        }
+
+        for(int y=0; y<this.size.getY(); y++){
+            Rule rule = new Rule(values);
+
+            ArrayList<Position> positions = new ArrayList<>();
+            for(int x=0; x<this.size.getX(); x++){
+                positions.add(new Position(x,y));
+            }
+
+            this.add(rule, positions);
+        }
+    }
+
+    private void initWithValues(String[] values, Position caseSize){
+        int nbrColumn = this.size.getX() / caseSize.getX();
+        int nbrLine = this.size.getY() / caseSize.getY();
+        for(int y=0; y<nbrLine; y++){
+            for(int x=0; x<nbrColumn; x++){
+                Rule rule = new Rule(values);
+                ArrayList<Position> positions = new ArrayList<>();
+                for(int yLocal=0; yLocal<caseSize.getY(); yLocal++){
+                    for(int xLocal=0; xLocal<caseSize.getX(); xLocal++){
+                        positions.add(new Position(x * caseSize.getX() + xLocal,
+                                y * caseSize.getY() + yLocal));
+                    }
+                }
+                this.add(rule, positions);
+            }
+        }
     }
 }

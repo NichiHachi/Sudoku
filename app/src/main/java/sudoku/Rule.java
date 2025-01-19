@@ -12,13 +12,12 @@ public class Rule {
         this.rules = rulesMap;
     }
 
-    public Rule(ArrayList<String> rules){
+    public Rule(String[] rules){
         HashMap<String, Set<String>> ruleMap = new HashMap<>();
-        for(String key : rules){
-            ruleMap.put(key, new HashSet<>());
-            for(String value : rules){
-                ruleMap.get(key).add(value);
-            }
+        for(String value : rules){
+            Set<String> set = new HashSet<>();
+            set.add(value);
+            ruleMap.put(value, set);
         }
 
         this.rules = ruleMap;
@@ -26,7 +25,7 @@ public class Rule {
 
     public Set<String> get(String value){
         if (!this.isValid(value)){
-            System.err.println("Rule: The value isn't inside of the rules!");
+            System.err.println("[Rule] The value isn't inside of the rules!");
         }
         return rules.get(value);
     }
@@ -65,7 +64,7 @@ public class Rule {
 
     public boolean placeValue(String value){
         if (!this.isValid(value)){
-            System.err.println("Rule: The value can't be placed inside of the grid!");
+            System.err.println("[Rule] The value can't be placed inside of the grid!");
             return false;
         }
 
@@ -77,7 +76,7 @@ public class Rule {
 
     public void removeRule(String value){
         if (!this.isValid(value)){
-            System.err.println("Rule: The value isn't inside of the rules!");
+            System.err.println("[Rule] The value isn't inside of the rules!");
         }
         rules.remove(value);
     }
