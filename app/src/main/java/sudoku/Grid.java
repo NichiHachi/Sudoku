@@ -88,7 +88,7 @@ public class Grid {
         int x = position.getX();
         int y = position.getY();
 
-        if(!this.isInsideGrid(position) || this.gridCell[y][x] == null){
+        if(!this.isInsideGrid(position)){
             System.err.println("[Grid] Insert outside of a Sudoku");
             return false;
         }
@@ -105,7 +105,8 @@ public class Grid {
 
     private boolean isInsideGrid(Position position){
         return position.getX() >= 0 && position.getY() >= 0
-                && position.getX() < this.size.getX() && position.getY() < this.size.getY();
+                && position.getX() < this.size.getX() && position.getY() < this.size.getY()
+                && this.gridCell[position.getY()][position.getX()] != null;
     }
 
     private void removeCell(Position position){
@@ -141,6 +142,26 @@ public class Grid {
             this.insertValue(value, position);
         }
         this.print();
+    }
+
+    public Set<String> getPossiblePlays(Position position){
+        int x = position.getX();
+        int y = position.getY();
+        if(!this.isInsideGrid(position) || this.gridCell[y][x].getValue() != null || this.gridCell[y][x].getIdRules().isEmpty()){
+            return new HashSet<>();
+        }
+
+        Set<String> intersection = this.rules.get(this.gridCell[y][x].getIdRules().getFirst()).getPossibleMove();
+
+        for(int indexRule: this.gridCell[y][x].getIdRules()){
+            intersection.retainAll(this.rules.get(indexRule).getPossibleMove());
+        }
+
+        return intersection;
+    }
+
+    public int countPossiblePlays(Position position){
+        return this.getPossiblePlays(position).size();
     }
 
     String getColor(int ruleCount) {
