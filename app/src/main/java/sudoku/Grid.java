@@ -68,6 +68,40 @@ public class Grid {
         }
     }
 
+    public void insertValue(String value, Position position){
+        if(this.canInsertValue(value, position)){
+            this.handleInsertValue(value, position);
+        }
+    }
+
+    private void handleInsertValue(String value, Position position){
+        int x = position.getX();
+        int y = position.getY();
+        this.gridCell[y][x].insertValue(value);
+        for(int idRule : this.gridCell[y][x].getIdRules()){
+            this.rules.get(idRule).handleInsertValue(value);
+        }
+    }
+
+    private boolean canInsertValue(String value, Position position){
+        int x = position.getX();
+        int y = position.getY();
+
+        if(this.gridCell[y][x] == null){
+            System.err.println("[Grid] Insert outside of a Sudoku");
+            return false;
+        }
+
+        for(int ruleId : this.gridCell[y][x].getIdRules()){
+            if(!this.rules.get(ruleId).isValid(value)){
+                System.out.println("Can't place " + value + " here");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     String getColor(int ruleCount) {
         String[] colors = {
                 "\u001B[38;5;231m", // White

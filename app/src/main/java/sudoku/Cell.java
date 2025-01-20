@@ -3,19 +3,19 @@ package sudoku;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class Cell {
     private String value;
     private ArrayList<Integer> idRules;
 
     public Cell(ArrayList<Integer> idRules) {
+        this();
         this.idRules = idRules;
     }
 
     public Cell(Integer idRule){
-        this.idRules = new ArrayList<>(idRule);
+        this();
+        this.idRules.add(idRule);
     }
 
     public Cell() {
@@ -31,9 +31,9 @@ public class Cell {
         this.idRules.remove(idRule);
     }
 
-    public void placeValue(String value) {
+    public void insertValue(String value) {
         if (this.value != null) {
-            System.err.println("Cell: A value is already inside of the grid (" + this.value + ")");
+            System.err.println("[Cell] A value is already inside of the grid (" + this.value + ")");
         }
         this.value = value;
     }

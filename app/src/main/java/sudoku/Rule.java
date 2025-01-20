@@ -1,6 +1,5 @@
 package sudoku;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,20 +57,18 @@ public class Rule {
         }
     }
 
-    private boolean isValid(String value){
+    public boolean isValid(String value){
         return rules.containsKey(value);
     }
 
-    public boolean placeValue(String value){
+    public void handleInsertValue(String value){
         if (!this.isValid(value)){
-            System.err.println("[Rule] The value can't be placed inside of the grid!");
-            return false;
+            return;
         }
 
         for(String key : this.rules.get(value)){
             this.removeRule(key);
         }
-        return true;
     }
 
     public void removeRule(String value){
