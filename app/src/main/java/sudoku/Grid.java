@@ -102,6 +102,19 @@ public class Grid {
         return true;
     }
 
+    private boolean isInsideGrid(Position position){
+        return position.getX() >= 0 && position.getY() >= 0
+                && position.getX() < this.size.getX() && position.getY() < this.size.getY();
+    }
+
+    private void removeCell(Position position){
+        int x = position.getX();
+        int y = position.getY();
+        if(isInsideGrid(position)){
+            this.gridCell[y][x] = null;
+        }
+    }
+
     String getColor(int ruleCount) {
         String[] colors = {
                 "\u001B[38;5;231m", // White
