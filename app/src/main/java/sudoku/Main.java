@@ -1,9 +1,6 @@
 package sudoku;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args){
@@ -15,12 +12,8 @@ public class Main {
         sudokus.add(sudoku1);
         sudokus.add(sudoku2);
         sudokus.add(sudoku3);
+
         Grid grid = new Grid(sudokus);
-        grid.insertValue("1", new Position(0));
-        grid.insertValue("1", new Position(1));
-        grid.insertValue("1", new Position(2));
-        grid.insertValue("1", new Position(3));
-        grid.insertValue("2", new Position(2));
-        grid.print();
+        grid.playTerminal();
     }
 }

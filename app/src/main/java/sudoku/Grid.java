@@ -2,6 +2,7 @@ package sudoku;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Grid {
@@ -87,7 +88,7 @@ public class Grid {
         int x = position.getX();
         int y = position.getY();
 
-        if(this.gridCell[y][x] == null){
+        if(!this.isInsideGrid(position) || this.gridCell[y][x] == null){
             System.err.println("[Grid] Insert outside of a Sudoku");
             return false;
         }
@@ -113,6 +114,33 @@ public class Grid {
         if(isInsideGrid(position)){
             this.gridCell[y][x] = null;
         }
+    }
+
+    public boolean isComplete(){
+        for(int y=0; y<this.size.getY(); y++){
+            for(int x=0; x<this.size.getX(); x++){
+                if(this.gridCell[y][x] != null && this.gridCell[y][x].getValue() == null){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void playTerminal(){
+        Scanner scanner = new Scanner(System.in);
+        while(!this.isComplete()) {
+            this.print();
+            System.out.print("Insert value: ");
+            String value = scanner.nextLine();
+            System.out.print("Place " + value + " here: ");
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            scanner.nextLine();
+            Position position = new Position(x, y);
+            this.insertValue(value, position);
+        }
+        this.print();
     }
 
     String getColor(int ruleCount) {

@@ -6,10 +6,9 @@ import java.util.ArrayList;
 
 public class Cell {
     private String value;
-    private ArrayList<Integer> idRules;
+    private final ArrayList<Integer> idRules;
 
     public Cell(ArrayList<Integer> idRules) {
-        this();
         this.idRules = idRules;
     }
 
