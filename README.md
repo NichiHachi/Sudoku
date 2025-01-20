@@ -7,7 +7,7 @@ Bulid the project :
 
 Run the project :
 ```bash
-./bash run
+./gradlew run --console=plain -q
 ```
 
 ## Project structure
@@ -48,7 +48,7 @@ classDiagram
         + Grid(Sudoku[] sudokus)void
         + print()void
     }
-    
+
     class Sudoku {
         - Rule[] rules
         - Position[] rulesPosition
@@ -57,12 +57,12 @@ classDiagram
         + Sudoku(String[] values, Position offset)
         + Sudoku(String[] values)
     }
-    
+
     class Cell {
         - String value
         - int[] idRules
     }
-    
+
     class Rule {
         - HashMap String -> Set[String] rules
         + Rule(String[])
@@ -73,7 +73,7 @@ classDiagram
         + isValid(String value) boolean
         + placeValue(String value): boolean
     }
-    
+
     class Position {
         - int x
         - int y
