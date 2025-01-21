@@ -33,12 +33,25 @@ public class Cell {
     public void insertValue(String value) {
         if (this.value != null) {
             System.err.println("[Cell] A value is already inside of the grid (" + this.value + ")");
+            return;
         }
         this.value = value;
     }
 
     public String getValue() {
         return this.value;
+    }
+
+    public int getIdRule(int index){
+        if(index < 0 || index >= this.idRules.size()){
+            System.err.println("[Cell] getIdRule index out of range. Index: " + index + ", Size: " + this.idRules.size());
+            return -1;
+        }
+        return this.idRules.get(index);
+    }
+
+    public void resetValue() {
+        this.value = null;
     }
 
     public ArrayList<Integer> getIdRules() {

@@ -12,14 +12,16 @@ public class Rule {
     }
 
     public Rule(String[] rules){
-        HashMap<String, Set<String>> ruleMap = new HashMap<>();
+        this();
         for(String value : rules){
             Set<String> set = new HashSet<>();
             set.add(value);
-            ruleMap.put(value, set);
+            this.rules.put(value, set);
         }
+    }
 
-        this.rules = ruleMap;
+    public Rule(){
+        this.rules = new HashMap<>();
     }
 
     public Set<String> get(String value){
