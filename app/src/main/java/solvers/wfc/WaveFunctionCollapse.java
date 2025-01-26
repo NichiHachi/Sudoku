@@ -2,17 +2,15 @@ package solvers.wfc;
 
 import solvers.HistoryMove;
 import solvers.PreviousState;
+import solvers.Solver;
 import sudoku.Grid;
 import sudoku.Position;
 import java.util.*;
 
-public class WaveFunctionCollapse {
-    private Grid grid;
-    private Map<Grid, ArrayList<HistoryMove>> states;
+public class WaveFunctionCollapse extends Solver {
 
     public WaveFunctionCollapse(Grid grid){
-        this.grid = grid;
-        this.states = new HashMap<>();
+        super(grid);
     }
 
     public void solve() {
@@ -24,17 +22,17 @@ public class WaveFunctionCollapse {
             System.out.println(positionsMinimumEntropy);
             if (positionsMinimumEntropy.isEmpty()) {
                 if (!previousStates.isEmpty()) {
-                    PreviousState previousState = previousStates.remove(previousStates.size() - 1);
+                    PreviousState previousState = previousStates.removeLast();
                     this.rollBack(previousState);
 
-                    if (!this.states.containsKey(this.grid)) {
-                        this.states.putIfAbsent(this.grid, new ArrayList<>());
+                    if (!this.historyMoves.containsKey(this.grid)) {
+                        this.historyMoves.putIfAbsent(this.grid, new ArrayList<>());
                     }
 
                     HistoryMove historyMove = this.getHistoryMoveFromPosition(previousState.position);
                     if (historyMove == null) {
                         HistoryMove hm = new HistoryMove(previousState.value, previousState.position);
-                        this.states.get(this.grid).add(hm);
+                        this.historyMoves.get(this.grid).add(hm);
                     } else {
                         historyMove.add(previousState.value);
                     }
@@ -90,51 +88,7 @@ public class WaveFunctionCollapse {
         return cellsPosition.get(randomIndex);
     }
 
-    private String chooseRandomValue(Set<String> possiblePlays){
-        Random random = new Random();
-        String[] possiblePlaysArray = possiblePlays.toArray(new String[0]);
-        int randomIndex = random.nextInt(possiblePlays.size());
-        return possiblePlaysArray[randomIndex];
-    }
-
     public Grid getGrid(){
         return this.grid;
-    }
-
-    private void rollBack(PreviousState previousState){
-        this.grid.getCell(previousState.position).resetValue();
-        for(int i=0; i<previousState.rules.size(); i++){
-            int idRule = this.grid.getCell(previousState.position).getIdRule(i);
-            this.grid.addRule(idRule, previousState.value, previousState.rules.get(i));
-        }
-    }
-
-    private HistoryMove getHistoryMoveFromPosition(Position position){
-        if(!this.states.containsKey(this.grid)){
-            System.out.println("Hmmm");
-            return null;
-        }
-
-        for(HistoryMove historyMove : this.states.get(this.grid)){
-            if(historyMove.position.equals(position)){
-                return historyMove;
-            }
-        }
-
-        return null;
-    }
-
-    private ArrayList<Position> getPositionsCompleted(){
-        ArrayList<Position> result = new ArrayList<>();
-        if(!this.states.containsKey(this.grid)){
-            return result;
-        }
-
-        for(HistoryMove historyMove : this.states.get(this.grid)){
-            if(historyMove.isComplete){
-                result.add(historyMove.position);
-            }
-        }
-        return result;
     }
 }
