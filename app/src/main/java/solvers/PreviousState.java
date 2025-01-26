@@ -1,9 +1,8 @@
-package solvers.wfc;
+package solvers;
 
 import sudoku.Position;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Set;
 
 public class PreviousState {

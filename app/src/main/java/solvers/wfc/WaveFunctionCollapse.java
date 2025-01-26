@@ -1,5 +1,7 @@
 package solvers.wfc;
 
+import solvers.HistoryMove;
+import solvers.PreviousState;
 import sudoku.Grid;
 import sudoku.Position;
 import java.util.*;
