@@ -91,4 +91,8 @@ public class Rule {
     public int size(){
         return rules.size();
     }
+
+    public boolean isPrintable() {
+        return this.printable;
+    }
 }
