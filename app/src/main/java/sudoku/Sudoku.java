@@ -12,12 +12,14 @@ public class Sudoku {
     ArrayList<Set<Position>> rulesPosition;
     Position offsetPosition;
     Position size;
+    Set<String> symbols;
 
     public Sudoku(int size, Position offsetPosition){
         this.size = new Position(size);
         this.offsetPosition = offsetPosition;
         this.rules = new ArrayList<>();
         this.rulesPosition = new ArrayList<>();
+        this.symbols = new HashSet<>();
     }
 
     public Sudoku(int size, int diagonalOffsetPosition){
@@ -115,11 +117,10 @@ public class Sudoku {
     }
 
     public void initColumnsRows(){
-        Set<String> values = new HashSet<>();
         for(Rule rule : this.rules){
-            values.addAll(rule.getPossibleMove());
+            this.symbols.addAll(rule.getPossibleMove());
         }
-        this.initColumnsRows(values.toArray(new String[0]));
+        this.initColumnsRows(this.symbols.toArray(new String[0]));
     }
 
     private void initColumnsRows(String[] values){
@@ -162,5 +163,9 @@ public class Sudoku {
                 this.add(rule, positions);
             }
         }
+    }
+
+    public Set<String> getSymbols(){
+        return this.symbols;
     }
 }
