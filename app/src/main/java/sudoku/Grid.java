@@ -100,7 +100,7 @@ public class Grid {
         }
     }
 
-    private boolean canInsertValue(String value, Position position) {
+    public boolean canInsertValue(String value, Position position) {
         int x = position.getX();
         int y = position.getY();
 
