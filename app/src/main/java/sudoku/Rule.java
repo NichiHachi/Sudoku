@@ -6,22 +6,30 @@ import java.util.Set;
 
 public class Rule {
     private HashMap<String, Set<String>> rules;
+    private boolean printable;
 
-    public Rule(HashMap<String, Set<String>> rulesMap) {
+    public Rule(HashMap<String, Set<String>> rulesMap, boolean printable) {
         this.rules = rulesMap;
+        this.printable = printable;
     }
 
-    public Rule(String[] rules){
+    public Rule(String[] rules, boolean printable) {
         this();
         for(String value : rules){
             Set<String> set = new HashSet<>();
             set.add(value);
             this.rules.put(value, set);
         }
+        this.printable = printable;
+    }
+
+    public Rule(String[] rules){
+        this(rules, true);
     }
 
     public Rule(){
         this.rules = new HashMap<>();
+        this.printable = true;
     }
 
     public Set<String> get(String value){

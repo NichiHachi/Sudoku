@@ -42,7 +42,7 @@ public class Sudoku {
         }
 
         this.initWithValues(values, caseSize);
-        this.initColumnsLines();
+        this.initColumnsRows();
     }
 
     public Sudoku(String[] values, Position offsetPosition){
@@ -114,17 +114,17 @@ public class Sudoku {
         this.rulesPosition.remove(index);
     }
 
-    public void initColumnsLines(){
+    public void initColumnsRows(){
         Set<String> values = new HashSet<>();
         for(Rule rule : this.rules){
             values.addAll(rule.getPossibleMove());
         }
-        this.initColumnsLines(values.toArray(new String[0]));
+        this.initColumnsRows(values.toArray(new String[0]));
     }
 
-    private void initColumnsLines(String[] values){
+    private void initColumnsRows(String[] values){
         for(int x=0; x<this.size.getX(); x++){
-            Rule rule = new Rule(values);
+            Rule rule = new Rule(values, false);
 
             ArrayList<Position> positions = new ArrayList<>();
             for(int y=0; y<this.size.getY(); y++){
@@ -135,7 +135,7 @@ public class Sudoku {
         }
 
         for(int y=0; y<this.size.getY(); y++){
-            Rule rule = new Rule(values);
+            Rule rule = new Rule(values, false);
 
             ArrayList<Position> positions = new ArrayList<>();
             for(int x=0; x<this.size.getX(); x++){
