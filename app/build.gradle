@@ -41,3 +41,10 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+task runGraphic(type: JavaExec) {
+    group = "application"
+    description = "Runs the graphics application"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'sudoku.graphic.MainGraphic'
+}
