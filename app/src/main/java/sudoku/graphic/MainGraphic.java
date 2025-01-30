@@ -14,9 +14,9 @@ import sudoku.Sudoku;
 
 public class MainGraphic {
 
-    private Grid grid;
+    private final Grid grid;
 
-    private JFrame frame = new JFrame("Sudoku");
+    private final JFrame frame = new JFrame("Sudoku");
 
     private int startX = 0, startY = 0, cellSize = 110;
 
@@ -66,9 +66,6 @@ public class MainGraphic {
         this.startX = (frameWidth - gridWidth) / 2;
         this.startY = (frameHeight - gridHeight) / 2;
 
-        System.out.println("Start coordinates: " + startX + ", " + startY);
-        System.out.println("Cell size: " + cellSize);
-
     }
 
     public void draw() {
@@ -76,13 +73,10 @@ public class MainGraphic {
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
                 sudoku.Cell cell = grid.getCell(x, y);
-                if (cell == null) {
-                    System.out.println("Cell is null");
-                } else {
+                if (cell != null) {
                     String value = cell.getValue();
                     drawCell(x, y, value);
                 }
-
             }
         }
         frame.revalidate();
@@ -98,30 +92,17 @@ public class MainGraphic {
         label.setPreferredSize(new java.awt.Dimension(cellSize, cellSize));
         cell.add(label);
 
-        frame.add(cell);
-    }
-
-    public void play() {
-        final int[] clicked = { 0, 0 };
-        frame.addMouseListener(new java.awt.event.MouseAdapter() {
+        cell.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                clicked[0] = (e.getX() - startX) / cellSize;
-                clicked[1] = (e.getY() - startY) / cellSize;
-
-                System.out.println("Clicked: " + clicked[0] + ", " + clicked[1]);
-
-                if (clicked[0] >= 0 && clicked[0] < grid.getSize().getX() && clicked[1] >= 0
-                        && clicked[1] < grid.getSize().getY()) {
-                    String newValue = javax.swing.JOptionPane.showInputDialog(frame,
-                            "Enter value for cell (" + clicked[0] + ", " + clicked[1] + "):");
-                    if (newValue != null && !newValue.isEmpty()
-                            && grid.canInsertValue(newValue, new Position(clicked[0], clicked[1]))) {
-                        grid.insertValue(newValue, new Position(clicked[0], clicked[1]));
-                    }
-                }
+                System.out.println("Cellule cliquée : (" + x + ", " + y + ")");
+                MainGraphic.this.grid.insertValue("1", new Position(x, y));
+                System.out.println("Après insertion : " + MainGraphic.this.grid.getCell(x, y).getValue());
             }
         });
+        System.out.println("Après insertion 2 : " + MainGraphic.this.grid.getCell(x, y).getValue());
+
+        frame.add(cell);
     }
 
 }
