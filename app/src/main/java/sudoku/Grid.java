@@ -6,8 +6,17 @@ public class Grid {
     ArrayList<Rule> rules;
     Position size;
     Cell[][] gridCell;
+    Set<String> symbols;
+    ArrayList<Set<Position>> rulesPositions;
+
+    public Grid() {
+        this.rulesPositions = new ArrayList<>();
+        this.rules = new ArrayList<>();
+        this.symbols = new HashSet<>();
+    }
 
     public Grid(ArrayList<Sudoku> sudokus) {
+        this();
         // Init the size of the Grid
         // Get the min and max Position between each Sudoku for index and size purpose
         Position minPos = sudokus.getFirst().getMinPosition();
@@ -22,15 +31,14 @@ public class Grid {
         this.gridCell = new Cell[this.size.getY()][this.size.getX()];
 
         // Init the rules
-        ArrayList<Set<Position>> rulesPositions = new ArrayList<>();
-        this.rules = new ArrayList<>();
         for (Sudoku sudoku : sudokus) {
+            this.symbols.addAll(sudoku.getSymbols());
             for (int i=0; i<sudoku.getNumberRule(); i++) {
                 Set<Position> ruleAbsolutePositions = adjustPositions(sudoku.getRulePositions(i), resizeVector);
                 Rule rule = sudoku.getRule(i);
-                int index = rulesPositions.indexOf(ruleAbsolutePositions);
+                int index = this.rulesPositions.indexOf(ruleAbsolutePositions);
                 if (index == -1) {
-                    rulesPositions.add(ruleAbsolutePositions);
+                    this.rulesPositions.add(ruleAbsolutePositions);
                     this.rules.add(rule);
                 } else {
                     this.rules.get(index).mergingRule(rule);
@@ -231,5 +239,13 @@ public class Grid {
             absolutePositions.add(position.add(adjustPosition));
         }
         return absolutePositions;
+    }
+
+    public ArrayList<Set<Position>> getRulesPositions(){
+        return this.rulesPositions;
+    }
+
+    public Set<String> getSymbols(){
+        return this.symbols;
     }
 }
