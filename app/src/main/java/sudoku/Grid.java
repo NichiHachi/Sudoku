@@ -1,6 +1,9 @@
 package sudoku;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 
 public class Grid {
     ArrayList<Rule> rules;
@@ -52,17 +55,13 @@ public class Grid {
         }
     }
 
-    public Position getSize(){
-        return this.size;
-    }
-
-    public Cell getCell(Position position){
+    public Cell getCell(Position position) {
         return this.gridCell[position.getY()][position.getX()];
     }
 
-    public void reset(ArrayList<Rule> rules){
-        for(int y=0; y<this.size.getY(); y++){
-            for(int x=0; x<this.size.getX(); x++){
+    public void reset(ArrayList<Rule> rules) {
+        for (int y = 0; y < this.size.getY(); y++) {
+            for (int x = 0; x < this.size.getX(); x++) {
                 if (this.gridCell[y][x] != null) {
                     this.gridCell[y][x].resetValue();
                 }
@@ -160,34 +159,35 @@ public class Grid {
         this.print();
     }
 
-    public Set<String> getPossiblePlays(Position position){
+    public Set<String> getPossiblePlays(Position position) {
         int x = position.getX();
         int y = position.getY();
-        if(!this.isInsideGrid(position) || this.gridCell[y][x].getValue() != null || this.gridCell[y][x].getIdRules().isEmpty()){
+        if (!this.isInsideGrid(position) || this.gridCell[y][x].getValue() != null
+                || this.gridCell[y][x].getIdRules().isEmpty()) {
             return new HashSet<>();
         }
 
         Set<String> intersection = this.rules.get(this.gridCell[y][x].getIdRules().getFirst()).getPossibleMove();
 
-        for(int indexRule: this.gridCell[y][x].getIdRules()){
+        for (int indexRule : this.gridCell[y][x].getIdRules()) {
             intersection.retainAll(this.rules.get(indexRule).getPossibleMove());
         }
 
         return intersection;
     }
 
-    public int countPossiblePlays(Position position){
+    public int countPossiblePlays(Position position) {
         return this.getPossiblePlays(position).size();
     }
 
-    public void addRule(int idRule, String value, Set<String> rule){
+    public void addRule(int idRule, String value, Set<String> rule) {
         this.rules.get(idRule).add(value, rule);
     }
 
-    public ArrayList<Set<String>> getRules(Position position, String value){
+    public ArrayList<Set<String>> getRules(Position position, String value) {
         ArrayList<Set<String>> rules = new ArrayList<>();
         ArrayList<Integer> idRules = this.gridCell[position.getY()][position.getX()].getIdRules();
-        for(int idRule : idRules){
+        for (int idRule : idRules) {
             rules.add(this.rules.get(idRule).get(value));
         }
         return rules;

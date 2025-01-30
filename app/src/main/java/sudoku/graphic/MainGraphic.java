@@ -19,6 +19,8 @@ public class MainGraphic {
     private final JFrame frame = new JFrame("Sudoku");
 
     private int startX = 0, startY = 0, cellSize = 110;
+    private int clickedX = -1;
+    private int clickedY = -1;
 
     public MainGraphic(Grid grid) {
         this.grid = grid;
@@ -69,6 +71,7 @@ public class MainGraphic {
     }
 
     public void draw() {
+        this.grid.print();
         frame.getContentPane().removeAll();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
@@ -90,19 +93,48 @@ public class MainGraphic {
 
         JLabel label = new JLabel(value, SwingConstants.CENTER);
         label.setPreferredSize(new java.awt.Dimension(cellSize, cellSize));
+        label.setForeground(java.awt.Color.BLACK);
         cell.add(label);
 
         cell.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
+                clickedX = x;
+                clickedY = y;
                 System.out.println("Cellule cliquée : (" + x + ", " + y + ")");
-                MainGraphic.this.grid.insertValue("1", new Position(x, y));
-                System.out.println("Après insertion : " + MainGraphic.this.grid.getCell(x, y).getValue());
+                cell.requestFocusInWindow(); // Redonner le focus au composant cell
+
             }
         });
-        System.out.println("Après insertion 2 : " + MainGraphic.this.grid.getCell(x, y).getValue());
 
+        cell.addKeyListener(new java.awt.event.KeyAdapter() {
+            private StringBuilder input = new StringBuilder();
+
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                char keyChar = e.getKeyChar();
+                if (Character.isDigit(keyChar)) {
+                    input.append(keyChar);
+                }
+            }
+
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String value = input.toString();
+                    if (!value.isEmpty() && clickedX != -1 && clickedY != -1) {
+                        System.out.println("Cellule cliquée : (" + clickedX + ", " + clickedY + ")");
+                        MainGraphic.this.grid.insertValue(value, new Position(clickedX, clickedY));
+                        System.out.println(
+                                "Après insertion : " + MainGraphic.this.grid.getCell(clickedX, clickedY).getValue());
+                        MainGraphic.this.draw();
+                        input.setLength(0);
+                    }
+                }
+            }
+        });
+
+        cell.setFocusable(true);
         frame.add(cell);
     }
-
 }
