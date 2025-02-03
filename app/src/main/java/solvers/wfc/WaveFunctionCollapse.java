@@ -55,8 +55,8 @@ public class WaveFunctionCollapse extends Solver {
                 }
                 if (!possiblePlays.isEmpty()) {
                     String randomValue = this.chooseRandomValue(possiblePlays);
-                    previousStates.add(new PreviousState(randomPosition, randomValue, this.grid.getRules(randomPosition, randomValue)));
-                    this.grid.insertValue(randomValue, randomPosition);
+                    // previousStates.add(new PreviousState(randomPosition, randomValue, this.grid.getRules(randomPosition, randomValue)));
+                    this.grid.insertSymbol(randomValue, randomPosition);
                 }
             }
             this.grid.print();

@@ -23,7 +23,7 @@ public abstract class Solver {
         this.grid.getCell(previousState.position).resetValue();
         for(int i=0; i<previousState.rules.size(); i++){
             int idRule = this.grid.getCell(previousState.position).getIdRule(i);
-            this.grid.addRule(idRule, previousState.value, previousState.rules.get(i));
+            //this.grid.addRule(idRule, previousState.value, previousState.rules.get(i));
         }
     }
 
