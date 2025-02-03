@@ -45,3 +45,10 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+task solveBacktrack(type: JavaExec) {
+    group = "application"
+    description = "Solve Sudoku with Backtracking"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'solvers.backtrack.MainBacktrack'
+}

@@ -96,11 +96,12 @@ public class Grid {
         int y = position.getY();
         this.gridCell[y][x].insertValue(value);
         for(int idRule : this.gridCell[y][x].getIdRules()){
+            System.out.println("Rule " + idRule + " is valid for " + value);
             this.rules.get(idRule).handleInsertValue(value);
         }
     }
 
-    private boolean canInsertValue(String value, Position position){
+    public boolean canInsertValue(String value, Position position){
         int x = position.getX();
         int y = position.getY();
 
@@ -167,10 +168,19 @@ public class Grid {
             return new HashSet<>();
         }
 
+        Cell cell = this.gridCell[y][x];
+        System.out.println("Rules for position " + position + ": " + cell.getIdRules());
+
+
         Set<String> intersection = this.rules.get(this.gridCell[y][x].getIdRules().getFirst()).getPossibleMove();
+        System.out.println("Initial possible moves from first rule: " + intersection);
 
         for(int indexRule: this.gridCell[y][x].getIdRules()){
-            intersection.retainAll(this.rules.get(indexRule).getPossibleMove());
+            Set<String> ruleMoves = this.rules.get(indexRule).getPossibleMove();
+            System.out.println("Rule " + indexRule + " possible moves: " + ruleMoves);
+
+            intersection.retainAll(ruleMoves);
+            System.out.println("Intersection after rule " + indexRule + ": " + intersection);
         }
 
         return intersection;
