@@ -1,12 +1,12 @@
 package solvers.backtrack;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import solvers.Solver;
+import sudoku.Cell;
 import sudoku.Grid;
 import sudoku.Position;
-import sudoku.Cell;
-
-import java.util.Set;
-import java.util.HashSet;
 
 public class Backtrack extends Solver {
     public Backtrack(Grid grid) {
