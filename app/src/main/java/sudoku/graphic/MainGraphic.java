@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -15,7 +16,7 @@ import sudoku.Sudoku;
 
 public class MainGraphic {
 
-    private final Grid grid;
+    private Grid grid;
     private ArrayList<java.awt.Color> colors;
 
     private final JFrame frame = new JFrame("Sudoku");
@@ -99,6 +100,54 @@ public class MainGraphic {
             }
         }
 
+        // Add solve button
+        javax.swing.JButton solveButton = new javax.swing.JButton("Résoudre");
+        solveButton.setBounds(frame.getWidth() - 150, 50, 100, 50);
+        solveButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                draw();
+            }
+        });
+        frame.add(solveButton);
+
+        javax.swing.JButton generateButton = new javax.swing.JButton("Générer");
+        generateButton.setBounds(frame.getWidth() - 150, 110, 100, 50);
+        generateButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                String gridSizeStr = JOptionPane.showInputDialog(frame, "Entrez la taille de la grille:");
+                String multipleSudokuStr = JOptionPane.showInputDialog(frame, "Y a-t-il plusieurs Sudoku? (oui/non):");
+
+                int gridSize = Integer.parseInt(gridSizeStr);
+                System.out.println(multipleSudokuStr);
+                boolean multipleSudoku = multipleSudokuStr.equalsIgnoreCase("oui");
+                System.out.println("Multiple Sudoku: " + multipleSudoku);
+                String[] values = new String[gridSize];
+                for (int i = 0; i < gridSize; i++) {
+                    values[i] = String.valueOf(i + 1);
+                }
+
+                ArrayList<Sudoku> sudokus = new ArrayList<>();
+                if (multipleSudoku) {
+                    String nbSudoku = JOptionPane.showInputDialog(frame, "Entrez le nombre de Sudoku:");
+                    int nb = Integer.parseInt(nbSudoku);
+                    for (int i = 0; i < nb; i++) {
+                        String offsetXStr = JOptionPane.showInputDialog(frame,
+                                "Entrez l'offset pour le Sudoku " + (i + 1) + ":");
+                        int offsetX = Integer.parseInt(offsetXStr);
+                        sudokus.add(new Sudoku(values, offsetX));
+                    }
+                }
+                sudokus.add(new Sudoku(values));
+
+                Grid grid = new Grid(sudokus);
+                MainGraphic.this.grid = grid;
+                draw();
+            }
+        });
+        frame.add(generateButton);
+
         frame.revalidate();
         frame.repaint();
     }
@@ -142,7 +191,7 @@ public class MainGraphic {
 
         JLabel label = new JLabel(value, SwingConstants.CENTER);
         label.setPreferredSize(new java.awt.Dimension(cellSize, cellSize));
-        label.setForeground(java.awt.Color.BLACK);
+        label.setForeground(java.awt.Color.WHITE);
         label.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 32));
         cell.add(label);
 
