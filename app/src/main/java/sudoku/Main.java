@@ -1,8 +1,6 @@
 package sudoku;
 
-import java.util.*;
-
-import sudoku.graphic.MainGraphic;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +9,7 @@ public class Main {
         Sudoku sudoku3 = new Sudoku(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }, -1);
 
         ArrayList<Sudoku> sudokus = new ArrayList<>();
-        sudokus.add(sudoku0);
+        sudokus.add(sudoku1);
 
         Grid grid = new Grid(sudokus);
         // grid.playTerminal();

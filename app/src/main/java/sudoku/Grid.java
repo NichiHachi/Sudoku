@@ -36,7 +36,7 @@ public class Grid {
         // Init the rules
         for (Sudoku sudoku : sudokus) {
             this.symbols.addAll(sudoku.getSymbols());
-            for (int i=0; i<sudoku.getNumberRule(); i++) {
+            for (int i = 0; i < sudoku.getNumberRule(); i++) {
                 Set<Position> ruleAbsolutePositions = adjustPositions(sudoku.getRulePositions(i), resizeVector);
                 Rule rule = sudoku.getRule(i);
                 int index = this.rulesPositions.indexOf(ruleAbsolutePositions);
@@ -241,11 +241,19 @@ public class Grid {
         return absolutePositions;
     }
 
-    public ArrayList<Set<Position>> getRulesPositions(){
+    public ArrayList<Set<Position>> getRulesPositions() {
         return this.rulesPositions;
     }
 
-    public Set<String> getSymbols(){
+    public Set<String> getSymbols() {
         return this.symbols;
+    }
+
+    public Position getSize() {
+        return this.size;
+    }
+
+    public ArrayList<Rule> getRules() {
+        return this.rules;
     }
 }

@@ -10,11 +10,13 @@ import javax.swing.SwingConstants;
 
 import sudoku.Grid;
 import sudoku.Position;
+import sudoku.Rule;
 import sudoku.Sudoku;
 
 public class MainGraphic {
 
     private final Grid grid;
+    private ArrayList<java.awt.Color> colors;
 
     private final JFrame frame = new JFrame("Sudoku");
 
@@ -24,6 +26,7 @@ public class MainGraphic {
 
     public MainGraphic(Grid grid) {
         this.grid = grid;
+        initializeColors();
     }
 
     public static void main(String[] args) {
@@ -70,18 +73,32 @@ public class MainGraphic {
 
     }
 
+    private void initializeColors() {
+        this.colors = new ArrayList<>();
+        for (Rule rule : this.grid.getRules()) {
+            if (rule.isPrintable()) {
+                java.awt.Color randomColor = new java.awt.Color((int) (Math.random() * 0x1000000));
+                colors.add(randomColor);
+            } else {
+                colors.add(java.awt.Color.WHITE);
+            }
+        }
+    }
+
     public void draw() {
         this.grid.print();
         frame.getContentPane().removeAll();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
-                sudoku.Cell cell = grid.getCell(x, y);
+                sudoku.Cell cell = grid.getCell(new Position(x, y));
                 if (cell != null) {
+
                     String value = cell.getValue();
                     drawCell(x, y, value);
                 }
             }
         }
+
         frame.revalidate();
         frame.repaint();
     }
@@ -90,10 +107,45 @@ public class MainGraphic {
         JPanel cell = new JPanel();
         cell.setBounds(startX + x * cellSize, startY + y * cellSize, cellSize, cellSize);
         cell.setBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK));
+        sudoku.Cell c = grid.getCell(new Position(x, y));
+        int nb = c.getNumberOfPrintableRules(grid.getRules());
+        if (nb > 1) {
+            int red = 0, green = 0, blue = 0;
+            int count = 0;
+            for (Integer idRule : c.getIdRules()) {
+                if (grid.getRules().get(idRule).isPrintable()) {
+                    java.awt.Color color = colors.get(idRule);
+                    red += color.getRed();
+                    green += color.getGreen();
+                    blue += color.getBlue();
+                    count++;
+                }
+            }
+            if (count > 0) {
+                red /= count;
+                green /= count;
+                blue /= count;
+                java.awt.Color averageColor = new java.awt.Color(red, green, blue);
+                cell.setOpaque(true);
+                cell.setBackground(averageColor);
+            }
+        } else {
+            for (Integer idRule : c.getIdRules()) {
+                if (grid.getRules().get(idRule).isPrintable()) {
+                    cell.setOpaque(true);
+                    java.awt.Color color = colors.get(idRule);
+
+                    cell.setBackground(color);
+                }
+            }
+        }
 
         JLabel label = new JLabel(value, SwingConstants.CENTER);
         label.setPreferredSize(new java.awt.Dimension(cellSize, cellSize));
         label.setForeground(java.awt.Color.BLACK);
+        label.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 32));
+        cell.add(label);
+
         cell.add(label);
 
         cell.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -102,7 +154,7 @@ public class MainGraphic {
                 clickedX = x;
                 clickedY = y;
                 System.out.println("Cellule cliquée : (" + x + ", " + y + ")");
-                cell.requestFocusInWindow(); // Redonner le focus au composant cell
+                cell.requestFocusInWindow();
 
             }
         });
@@ -125,8 +177,10 @@ public class MainGraphic {
                     if (!value.isEmpty() && clickedX != -1 && clickedY != -1) {
                         System.out.println("Cellule cliquée : (" + clickedX + ", " + clickedY + ")");
                         MainGraphic.this.grid.insertValue(value, new Position(clickedX, clickedY));
+                        label.setText(value);
                         System.out.println(
-                                "Après insertion : " + MainGraphic.this.grid.getCell(clickedX, clickedY).getValue());
+                                "Après insertion : "
+                                        + MainGraphic.this.grid.getCell(new Position(clickedX, clickedY)).getValue());
                         MainGraphic.this.draw();
                         input.setLength(0);
                     }
