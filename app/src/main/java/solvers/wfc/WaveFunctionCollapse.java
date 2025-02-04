@@ -7,6 +7,8 @@ import sudoku.rule.Rule;
 
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 public class WaveFunctionCollapse extends Solver {
     int[][] entropy;
 
@@ -21,7 +23,12 @@ public class WaveFunctionCollapse extends Solver {
     private void fillEntropy(){
         for(int y=0; y<grid.getSize().getY(); y++){
             for(int x=0; x<grid.getSize().getX(); x++){
-                this.entropy[y][x] = this.getPossiblePlays(new Position(x, y)).size();
+                Position position = new Position(x, y);
+                if(grid.getCell(position) == null || grid.getSymbol(position) != null){
+                    this.entropy[y][x] = -1;
+                } else {
+                    this.entropy[y][x] = this.getPossiblePlays(position).size();
+                };
             }
         }
     }
@@ -61,7 +68,6 @@ public class WaveFunctionCollapse extends Solver {
             if (positionsMinimumEntropy.isEmpty()) {
                 if (!this.lastInserts.isEmpty()) {
                     this.rollBack();
-                    System.out.println("Rollback no position");
                 } else {
                     System.out.println("Impossible to solve... Exiting");
                     break;
@@ -69,18 +75,18 @@ public class WaveFunctionCollapse extends Solver {
             } else {
                 if (cellsEntropy.getEntropy() <= 0) {
                     this.rollBack();
-                    System.out.println("Rollback entropy");
                 } else {
                     Position randomPosition = this.chooseRandomPosition(positionsMinimumEntropy);
                     Set<String> possiblePlays = this.getPossiblePlays(randomPosition);
                     String randomSymbol = this.chooseRandomSymbol(possiblePlays);
                     this.insertSymbol(randomSymbol, randomPosition);
-                    System.out.println("Insert " + randomSymbol + " in " + randomPosition);
                 }
             }
 //            this.grid.print();
+//            this.printEntropy();
+//            System.out.println((this.lastInserts.getLast()));
 //            try {
-//                sleep(10);
+//                sleep(50);
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
@@ -96,7 +102,10 @@ public class WaveFunctionCollapse extends Solver {
                 if (!this.grid.isInsideGrid(position) || this.grid.getSymbol(position) != null) {
                     continue;
                 }
-                cellsEntropy.addCell(this.entropy[y][x], position);
+
+                int alreadyDone = this.getHistoryInsert(position).size();
+
+                cellsEntropy.addCell(this.entropy[y][x] - alreadyDone, position);
             }
         }
         return cellsEntropy;
@@ -118,7 +127,7 @@ public class WaveFunctionCollapse extends Solver {
             int x = positionEntropy.getX();
             int y = positionEntropy.getY();
 
-            this.entropy[y][x] = this.getPossiblePlays(positionEntropy).size();
+            this.entropy[y][x] = this.grid.getPossiblePlays(positionEntropy).size();
         }
     }
 

@@ -226,19 +226,21 @@ public class Grid {
         this.print();
     }
 
-    public Set<String> getPossiblePlays(Position position){
+    public Set<String> getPossiblePlays(Position position) {
         int x = position.getX();
         int y = position.getY();
-        if(!this.isInsideGrid(position) || this.gridCell[y][x].getSymbol() != null || this.gridCell[y][x].getIdRules().isEmpty()){
+        if (!this.isInsideGrid(position) || this.gridCell[y][x].getSymbol() != null || this.gridCell[y][x].getIdRules().isEmpty()) {
             return new HashSet<>();
         }
 
         Set<String> intersection = new HashSet<>();
+        boolean firstRule = true;
 
-        for(int indexRule: this.gridCell[y][x].getIdRules()){
+        for (int indexRule : this.gridCell[y][x].getIdRules()) {
             Rule rule = this.rules.get(indexRule);
-            if(intersection.isEmpty()){
+            if (firstRule) {
                 intersection.addAll(this.symbols.get(rule.getIndexSymbols()));
+                firstRule = false;
             }
             intersection.removeAll(this.symbolUsed(rule));
         }
@@ -248,7 +250,9 @@ public class Grid {
     public Set<String> symbolUsed(Rule rule){
         Set<String> symbols = new HashSet<>();
         for(Position position : rule.getRulePositions()){
-            symbols.add(this.getSymbol(position));
+            if(this.getSymbol(position) != null) {
+                symbols.add(this.getSymbol(position));
+            }
         }
         return symbols;
     }
