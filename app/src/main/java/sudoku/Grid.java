@@ -1,9 +1,13 @@
 package sudoku;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.Set;
+
 import sudoku.rule.Rule;
 import sudoku.sudoku.Sudoku;
-
-import java.util.*;
 
 public class Grid {
     private final ArrayList<Rule> rules;
@@ -16,7 +20,7 @@ public class Grid {
         this.symbols = new ArrayList<>();
     }
 
-    public Grid(Builder builder){
+    public Grid(Builder builder) {
         this();
 
         Position minPos = builder.sudokus.getFirst().getMinPosition();
@@ -54,13 +58,13 @@ public class Grid {
 
     public void mergeSudokus(ArrayList<Sudoku> sudokus, Position resizeVector) {
         for (Sudoku sudoku : sudokus) {
-            if(!this.symbols.contains(sudoku.getSymbols())){
+            if (!this.symbols.contains(sudoku.getSymbols())) {
                 this.symbols.add(sudoku.getSymbols());
             }
             int index = this.symbols.indexOf(sudoku.getSymbols());
             Position offsetSudoku = sudoku.getOffsetPosition().add(resizeVector);
 
-            for (int i=0; i<sudoku.getNumberRule(); i++) {
+            for (int i = 0; i < sudoku.getNumberRule(); i++) {
                 Rule rule = sudoku.getRule(i);
                 rule.setIndexSymbols(index);
                 rule.offsetRepositioning(offsetSudoku);
@@ -73,7 +77,8 @@ public class Grid {
 
     private boolean containRule(Rule rule, int indexSymbols) {
         for (Rule existingRule : this.rules) {
-            if (existingRule.getRulePositions().equals(rule.getRulePositions()) && existingRule.getIndexSymbols() == indexSymbols) {
+            if (existingRule.getRulePositions().equals(rule.getRulePositions())
+                    && existingRule.getIndexSymbols() == indexSymbols) {
                 return true;
             }
         }
@@ -81,12 +86,12 @@ public class Grid {
     }
 
     public void initCells() {
-        for(int i=0; i<this.rules.size(); i++){
+        for (int i = 0; i < this.rules.size(); i++) {
             Rule rule = this.rules.get(i);
-            for(Position position : rule.getRulePositions()){
+            for (Position position : rule.getRulePositions()) {
                 int x = position.getX();
                 int y = position.getY();
-                if(this.gridCell[y][x] == null){
+                if (this.gridCell[y][x] == null) {
                     this.gridCell[y][x] = new Cell();
                 }
                 this.gridCell[y][x].addRule(i);
@@ -94,19 +99,19 @@ public class Grid {
         }
     }
 
-    public Position getSize(){
+    public Position getSize() {
         return this.size;
     }
 
-    public Cell getCell(Position position){
+    public Cell getCell(Position position) {
         return this.gridCell[position.getY()][position.getX()];
     }
 
-    public Rule getRule(int index){
+    public Rule getRule(int index) {
         return this.rules.get(index);
     }
 
-    public ArrayList<Rule> getRules(){
+    public ArrayList<Rule> getRules() {
         return this.rules;
     }
 
@@ -124,38 +129,38 @@ public class Grid {
         }
     }
 
-    public void insertSymbol(String symbol, Position position){
-        if(this.canInsertValue(symbol, position)){
+    public void insertSymbol(String symbol, Position position) {
+        if (this.canInsertValue(symbol, position)) {
             this.handleInsertValue(symbol, position);
         }
     }
 
-    private void handleInsertValue(String symbol, Position position){
+    private void handleInsertValue(String symbol, Position position) {
         int x = position.getX();
         int y = position.getY();
         this.gridCell[y][x].insertSymbol(symbol);
     }
 
-    private boolean canInsertValue(String symbol, Position position){
+    private boolean canInsertValue(String symbol, Position position) {
         int x = position.getX();
         int y = position.getY();
 
-        if(!this.isInsideGrid(position)){
+        if (!this.isInsideGrid(position)) {
             System.err.println("[Grid] Insert outside of a Sudoku");
             return false;
         }
 
-        for(int indexRule : this.gridCell[y][x].getIdRules()){
+        for (int indexRule : this.gridCell[y][x].getIdRules()) {
             Rule rule = this.rules.get(indexRule);
 
             int indexSymbols = rule.getIndexSymbols();
             Set<String> symbols = this.symbols.get(indexSymbols);
-            if(!symbols.contains(symbol)){
+            if (!symbols.contains(symbol)) {
                 return false;
             }
 
-            for(Position rulePosition : rule.getRulePositions()){
-                if(Objects.equals(this.getSymbol(rulePosition), symbol)){
+            for (Position rulePosition : rule.getRulePositions()) {
+                if (Objects.equals(this.getSymbol(rulePosition), symbol)) {
                     return false;
                 }
             }
@@ -164,20 +169,20 @@ public class Grid {
         return true;
     }
 
-    public ArrayList<Set<String>> getSymbols(){
+    public ArrayList<Set<String>> getSymbols() {
         return this.symbols;
     }
 
-    public Set<String> getSymbols(int index){
+    public Set<String> getSymbols(int index) {
         return this.symbols.get(index);
     }
 
-    public void resetSymbol(Position position){
+    public void resetSymbol(Position position) {
         this.getCell(position).resetSymbol();
     }
 
-    public String getSymbol(Position position){
-        if(!isInsideGrid(position)){
+    public String getSymbol(Position position) {
+        if (!isInsideGrid(position)) {
             return null;
         }
         int x = position.getX();
@@ -185,24 +190,24 @@ public class Grid {
         return this.gridCell[y][x].getSymbol();
     }
 
-    public boolean isInsideGrid(Position position){
+    public boolean isInsideGrid(Position position) {
         return position.getX() >= 0 && position.getY() >= 0
                 && position.getX() < this.size.getX() && position.getY() < this.size.getY()
                 && this.gridCell[position.getY()][position.getX()] != null;
     }
 
-    private void removeCell(Position position){
+    private void removeCell(Position position) {
         int x = position.getX();
         int y = position.getY();
-        if(isInsideGrid(position)){
+        if (isInsideGrid(position)) {
             this.gridCell[y][x] = null;
         }
     }
 
-    public boolean isComplete(){
-        for(int y=0; y<this.size.getY(); y++){
-            for(int x=0; x<this.size.getX(); x++){
-                if(this.gridCell[y][x] != null && this.gridCell[y][x].getSymbol() == null){
+    public boolean isComplete() {
+        for (int y = 0; y < this.size.getY(); y++) {
+            for (int x = 0; x < this.size.getX(); x++) {
+                if (this.gridCell[y][x] != null && this.gridCell[y][x].getSymbol() == null) {
                     return false;
                 }
             }
@@ -210,9 +215,9 @@ public class Grid {
         return true;
     }
 
-    public void playTerminal(){
+    public void playTerminal() {
         Scanner scanner = new Scanner(System.in);
-        while(!this.isComplete()) {
+        while (!this.isComplete()) {
             this.print();
             System.out.print("Insert value: ");
             String value = scanner.nextLine();
@@ -229,7 +234,8 @@ public class Grid {
     public Set<String> getPossiblePlays(Position position) {
         int x = position.getX();
         int y = position.getY();
-        if (!this.isInsideGrid(position) || this.gridCell[y][x].getSymbol() != null || this.gridCell[y][x].getIdRules().isEmpty()) {
+        if (!this.isInsideGrid(position) || this.gridCell[y][x].getSymbol() != null
+                || this.gridCell[y][x].getIdRules().isEmpty()) {
             return new HashSet<>();
         }
 
@@ -247,21 +253,21 @@ public class Grid {
         return intersection;
     }
 
-    public Set<String> symbolUsed(Rule rule){
+    public Set<String> symbolUsed(Rule rule) {
         Set<String> symbols = new HashSet<>();
-        for(Position position : rule.getRulePositions()){
-            if(this.getSymbol(position) != null) {
+        for (Position position : rule.getRulePositions()) {
+            if (this.getSymbol(position) != null) {
                 symbols.add(this.getSymbol(position));
             }
         }
         return symbols;
     }
 
-    public int countPossiblePlays(Position position){
+    public int countPossiblePlays(Position position) {
         return this.getPossiblePlays(position).size();
     }
 
-    public void addRule(Rule rule){
+    public void addRule(Rule rule) {
         this.rules.add(rule);
     }
 
@@ -287,13 +293,17 @@ public class Grid {
                 "\u001B[38;5;202m", // Red-Orange
                 "\u001B[38;5;196m", // Red
                 "\u001B[38;5;201m", // Magenta
-                "\u001B[38;5;93m",  // Light Purple
-                "\u001B[38;5;57m",  // Purple
-                "\u001B[38;5;21m",  // Blue
-                "\u001B[38;5;51m",  // Cyan
-                "\u001B[38;5;46m",  // Green
-                "\u001B[38;5;118m"  // Light Green
+                "\u001B[38;5;93m", // Light Purple
+                "\u001B[38;5;57m", // Purple
+                "\u001B[38;5;21m", // Blue
+                "\u001B[38;5;51m", // Cyan
+                "\u001B[38;5;46m", // Green
+                "\u001B[38;5;118m" // Light Green
         };
         return colors[ruleCount % colors.length];
+    }
+
+    public void setCell(Position position, Cell cell) {
+        this.gridCell[position.getY()][position.getX()] = cell;
     }
 }
