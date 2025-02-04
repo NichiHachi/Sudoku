@@ -1,18 +1,16 @@
 package sudoku;
 
-import java.util.ArrayList;
+import sudoku.sudoku.SudokuClassic;
 
 public class Main {
     public static void main(String[] args) {
-        Sudoku sudoku1 = new Sudoku(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" });
-        Sudoku sudoku2 = new Sudoku(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }, 1);
-        Sudoku sudoku3 = new Sudoku(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }, -1);
+        Grid grid = new Grid.Builder()
+                .addSudoku(new SudokuClassic(9))
+                .build();
 
-        ArrayList<Sudoku> sudokus = new ArrayList<>();
-        sudokus.add(sudoku1);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.88);
 
-        Grid grid = new Grid(sudokus);
-        // grid.playTerminal();
+        sudokuGenerator.generateSudoku();
 
     }
 }

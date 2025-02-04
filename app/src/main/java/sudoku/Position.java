@@ -28,9 +28,37 @@ public class Position {
         return new Position(this.x + pos.x, this.y + pos.y);
     }
 
+    public Position addX(int x){
+        return new Position(this.x + x, this.y);
+    }
+
+    public Position addY(int y){
+        return new Position(this.x, this.y + y);
+    }
+
+    public Position add(int z){
+        return new Position(this.x + z, this.y + z);
+    }
+
     public void addi(Position pos){
         this.x = this.x + pos.x;
         this.y = this.y + pos.y;
+    }
+
+    public void addXi(int x){
+        this.x = this.x + x;
+    }
+
+    public void addYi(int y){
+        this.y = this.y + y;
+    }
+
+    public void setX(int x){
+        this.x = x;
+    }
+
+    public void setY(int y){
+        this.y = y;
     }
 
     public Position max(Position position){

@@ -3,7 +3,7 @@ package sudoku;
 import java.util.ArrayList;
 
 public class Cell {
-    private String value;
+    private String symbol;
     private final ArrayList<Integer> idRules;
 
     public Cell(ArrayList<Integer> idRules) {
@@ -28,16 +28,16 @@ public class Cell {
         this.idRules.remove(idRule);
     }
 
-    public void insertValue(String value) {
-        if (this.value != null) {
-            System.err.println("[Cell] A value is already inside of the grid (" + this.value + ")");
+    public void insertSymbol(String symbol) {
+        if (this.symbol != null) {
+            System.err.println("[Cell] A value is already inside of the grid (" + this.symbol + ")");
             return;
         }
-        this.value = value;
+        this.symbol = symbol;
     }
 
-    public String getValue() {
-        return this.value;
+    public String getSymbol() {
+        return this.symbol;
     }
 
     public int getIdRule(int index) {
@@ -49,8 +49,8 @@ public class Cell {
         return this.idRules.get(index);
     }
 
-    public void resetValue() {
-        this.value = null;
+    public void resetSymbol() {
+        this.symbol = null;
     }
 
     public ArrayList<Integer> getIdRules() {
