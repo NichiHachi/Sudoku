@@ -6,15 +6,17 @@ import solvers.wfc.WaveFunctionCollapse;
 public class GenerateSudoku {
 
     private Grid grid;
+    private double percentage;
 
-    public GenerateSudoku(Grid grid) {
+    public GenerateSudoku(Grid grid, double percentage) {
         this.grid = grid;
+        this.percentage = percentage;
     }
 
     public void generateSudoku() {
         Solver solver = new WaveFunctionCollapse(grid);
         solver.solve();
-        deleteRandomCells((int) (grid.getSize().getX() * grid.getSize().getY() * 0.75));
+        deleteRandomCells((int) (grid.getSize().getX() * grid.getSize().getY() * this.percentage));
         grid.print();
     }
 

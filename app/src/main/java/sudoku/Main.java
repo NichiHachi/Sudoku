@@ -8,7 +8,7 @@ public class Main {
                 .addSudoku(new SudokuClassic(9))
                 .build();
 
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.88);
 
         sudokuGenerator.generateSudoku();
 
