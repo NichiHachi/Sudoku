@@ -1,94 +1,142 @@
 package solvers.wfc;
 
-import solvers.HistoryMove;
-import solvers.PreviousState;
 import solvers.Solver;
 import sudoku.Grid;
 import sudoku.Position;
+import sudoku.rule.Rule;
+
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 public class WaveFunctionCollapse extends Solver {
+    int[][] entropy;
 
     public WaveFunctionCollapse(Grid grid){
         super(grid);
+        int sizeX = grid.getSize().getX();
+        int sizeY = grid.getSize().getY();
+        this.entropy = new int[sizeY][sizeX];
+        this.fillEntropy();
     }
 
+    private void fillEntropy(){
+        for(int y=0; y<grid.getSize().getY(); y++){
+            for(int x=0; x<grid.getSize().getX(); x++){
+                Position position = new Position(x, y);
+                if(grid.getCell(position) == null || grid.getSymbol(position) != null){
+                    this.entropy[y][x] = -1;
+                } else {
+                    this.entropy[y][x] = this.getPossiblePlays(position).size();
+                };
+            }
+        }
+    }
+
+    @Override
+    protected void rollBack(){
+        if (this.lastInserts.isEmpty()){
+            return;
+        }
+
+        Position lastMovePosition = this.lastInserts.removeLast();
+        String lastSymbolInserted =  this.grid.getSymbol(lastMovePosition);
+        this.grid.resetSymbol(lastMovePosition);
+
+        if(!this.historyInserts.containsKey(this.grid)){
+            this.historyInserts.put(this.grid, new HashMap<>());
+        }
+        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)){
+            this.historyInserts.get(this.grid).put(lastMovePosition, new HashSet<>());
+        }
+        this.historyInserts.get(this.grid).get(lastMovePosition).add(lastSymbolInserted);
+        this.propagateEntropy(lastSymbolInserted, lastMovePosition, false);
+    }
+
+    @Override
+    protected void insertSymbol(String symbol, Position position){
+        super.insertSymbol(symbol, position);
+        this.propagateEntropy(symbol, position, true);
+    }
+
+    @Override
     public void solve() {
-        ArrayList<PreviousState> previousStates = new ArrayList<>();
         while (!this.grid.isComplete()) {
-            CellsEntropy cellsEntropy = this.getPositionsMinimumEntropy();
-            ArrayList<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
-            positionsMinimumEntropy.removeAll(this.getPositionsCompleted());
-            System.out.println(positionsMinimumEntropy);
+            Entropy cellsEntropy = this.getPositionsMinimumEntropy();
+            Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
+//            this.printEntropy();
             if (positionsMinimumEntropy.isEmpty()) {
-                if (!previousStates.isEmpty()) {
-                    PreviousState previousState = previousStates.removeLast();
-                    this.rollBack(previousState);
-
-                    if (!this.historyMoves.containsKey(this.grid)) {
-                        this.historyMoves.putIfAbsent(this.grid, new ArrayList<>());
-                    }
-
-                    HistoryMove historyMove = this.getHistoryMoveFromPosition(previousState.position);
-                    if (historyMove == null) {
-                        HistoryMove hm = new HistoryMove(previousState.value, previousState.position);
-                        this.historyMoves.get(this.grid).add(hm);
-                    } else {
-                        historyMove.add(previousState.value);
-                    }
-
-                    historyMove = this.getHistoryMoveFromPosition(previousState.position);
-                    if (historyMove != null && historyMove.values.size() == this.grid.getPossiblePlays(previousState.position).size()) {
-                        historyMove.completed();
-                    }
-
+                if (!this.lastInserts.isEmpty()) {
+                    this.rollBack();
                 } else {
                     System.out.println("Impossible to solve... Exiting");
                     break;
                 }
             } else {
-                Position randomPosition = this.chooseRandomCell(positionsMinimumEntropy);
-                Set<String> possiblePlays = this.grid.getPossiblePlays(randomPosition);
-                HistoryMove historyMove = this.getHistoryMoveFromPosition(randomPosition);
-                if (historyMove != null) {
-                    possiblePlays.removeAll(historyMove.values);
-                }
-                if (!possiblePlays.isEmpty()) {
-                    String randomValue = this.chooseRandomValue(possiblePlays);
-                    previousStates.add(new PreviousState(randomPosition, randomValue, this.grid.getRules(randomPosition, randomValue)));
-                    this.grid.insertValue(randomValue, randomPosition);
+                if (cellsEntropy.getEntropy() <= 0) {
+                    this.rollBack();
+                } else {
+                    Position randomPosition = this.chooseRandomPosition(positionsMinimumEntropy);
+                    Set<String> possiblePlays = this.getPossiblePlays(randomPosition);
+                    String randomSymbol = this.chooseRandomSymbol(possiblePlays);
+                    this.insertSymbol(randomSymbol, randomPosition);
                 }
             }
-            this.grid.print();
-            System.out.println(this.grid.hashCode());
-            System.out.println(previousStates.size());
+//            this.grid.print();
+//            this.printEntropy();
+//            System.out.println((this.lastInserts.getLast()));
+//            try {
+//                sleep(50);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
-        this.grid.print();
+//        this.grid.print();
     }
 
-    private CellsEntropy getPositionsMinimumEntropy(){
-        CellsEntropy cellsEntropy = new CellsEntropy();
-        for(int y=0; y<this.grid.getSize().getY(); y++){
-            for(int x=0; x<this.grid.getSize().getX(); x++){
-                Position position = new Position(x,y);
-                if(grid.countPossiblePlays(position) > 0) {
-                    cellsEntropy.addCell(grid.countPossiblePlays(position), position);
+    private Entropy getPositionsMinimumEntropy() {
+        Entropy cellsEntropy = new Entropy();
+        for (int y = 0; y < this.grid.getSize().getY(); y++) {
+            for (int x = 0; x < this.grid.getSize().getX(); x++) {
+                Position position = new Position(x, y);
+                if (!this.grid.isInsideGrid(position) || this.grid.getSymbol(position) != null) {
+                    continue;
                 }
+
+                int alreadyDone = this.getHistoryInsert(position).size();
+
+                cellsEntropy.addCell(this.entropy[y][x] - alreadyDone, position);
             }
         }
         return cellsEntropy;
     }
 
-    private Position chooseRandomCell(ArrayList<Position> cellsPosition) {
-        if (cellsPosition.isEmpty()) {
-            throw new IllegalArgumentException("cellsPosition list must not be empty");
+    private void propagateEntropy(String symbol, Position position, boolean isInsert){
+        Set<Position> positions = new HashSet<>();
+        ArrayList<Integer> idRules = this.grid.getCell(position).getIdRules();
+        for(int idRule : idRules){
+            Rule rule = this.grid.getRule(idRule);
+            int indexSymbols = rule.getIndexSymbols();
+            if(!this.grid.getSymbols(indexSymbols).contains(symbol)){
+                continue;
+            }
+            positions.addAll(rule.getRulePositions());
         }
-        Random random = new Random();
-        int randomIndex = random.nextInt(cellsPosition.size());
-        return cellsPosition.get(randomIndex);
+
+        for(Position positionEntropy : positions){
+            int x = positionEntropy.getX();
+            int y = positionEntropy.getY();
+
+            this.entropy[y][x] = this.grid.getPossiblePlays(positionEntropy).size();
+        }
     }
 
-    public Grid getGrid(){
-        return this.grid;
+    public void printEntropy() {
+        for (int[] ints : entropy) {
+            for (int anInt : ints) {
+                System.out.print(anInt + " ");
+            }
+            System.out.println();
+        }
     }
 }

@@ -2,18 +2,19 @@ package solvers.wfc;
 
 import sudoku.Position;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public class CellsEntropy {
+public class Entropy {
     private int entropy;
-    private ArrayList<Position> positionCells;
+    private Set<Position> positionCells;
 
-    public CellsEntropy(){
+    public Entropy(){
         this.entropy = (int) Double.POSITIVE_INFINITY;
-        this.positionCells = new ArrayList<>();
+        this.positionCells = new HashSet<>();
     }
 
-    public CellsEntropy(int entropy, Position position){
+    public Entropy(int entropy, Position position){
         this();
         this.entropy = entropy;
         this.positionCells.add(position);
@@ -24,7 +25,7 @@ public class CellsEntropy {
             this.positionCells.add(positionCell);
         } else if (cellEntropy < this.entropy){
             this.entropy = cellEntropy;
-            this.positionCells = new ArrayList<>();
+            this.positionCells = new HashSet<>();
             this.positionCells.add(positionCell);
         }
     }
@@ -33,11 +34,11 @@ public class CellsEntropy {
         return this.entropy;
     }
 
-    public ArrayList<Position> getPositionCells(){
+    public Set<Position> getPositionCells(){
         return this.positionCells;
     }
 
-    public void merge(CellsEntropy cellEntropy){
+    public void merge(Entropy cellEntropy){
         if (this.entropy > cellEntropy.getEntropy()){
             this.entropy = cellEntropy.getEntropy();
             this.positionCells = cellEntropy.getPositionCells();

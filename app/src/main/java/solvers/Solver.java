@@ -3,62 +3,78 @@ package solvers;
 import sudoku.Grid;
 import sudoku.Position;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Solver {
     protected Grid grid;
-    protected ArrayList<PreviousState> previousStates;
-    protected Map<Grid, ArrayList<HistoryMove>> historyMoves;
+    protected ArrayList<Position> lastInserts;
+    protected Map<Grid, Map<Position, Set<String>>> historyInserts;
 
     protected Solver(Grid grid){
         this.grid = grid;
+        lastInserts = new ArrayList<>();
+        historyInserts = new HashMap<>();
     }
 
     public abstract void solve();
 
-    protected void rollBack(PreviousState previousState){
-        this.grid.getCell(previousState.position).resetValue();
-        for(int i=0; i<previousState.rules.size(); i++){
-            int idRule = this.grid.getCell(previousState.position).getIdRule(i);
-            this.grid.addRule(idRule, previousState.value, previousState.rules.get(i));
+    protected void rollBack(){
+        if (this.lastInserts.isEmpty()){
+            return;
         }
+
+        Position lastMovePosition = this.lastInserts.removeLast();
+        String lastSymbolInserted =  this.grid.getSymbol(lastMovePosition);
+        this.grid.resetSymbol(lastMovePosition);
+
+        if(!this.historyInserts.containsKey(this.grid)){
+            this.historyInserts.put(this.grid, new HashMap<>());
+        }
+        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)){
+            this.historyInserts.get(this.grid).put(lastMovePosition, new HashSet<>());
+        }
+        this.historyInserts.get(this.grid).get(lastMovePosition).add(lastSymbolInserted);
     }
 
-    protected HistoryMove getHistoryMoveFromPosition(Position position){
-        if(!this.historyMoves.containsKey(this.grid)){
-            return null;
+    protected void insertSymbol(String symbol, Position position){
+        this.grid.insertSymbol(symbol, position);
+        this.lastInserts.add(position);
+    }
+
+    protected Set<String> getHistoryInsert(Position position){
+        if(!this.historyInserts.containsKey(this.grid)){
+            return new HashSet<>();
         }
 
-        for(HistoryMove historyMove : this.historyMoves.get(this.grid)){
-            if(historyMove.position.equals(position)){
-                return historyMove;
+        for (Map.Entry<Position, Set<String>> entry : this.historyInserts.get(this.grid).entrySet()) {
+            if (entry.getKey().equals(position)) {
+                return entry.getValue();
             }
         }
 
-        return null;
+        return new HashSet<>();
     }
 
-    protected ArrayList<Position> getPositionsCompleted(){
-        ArrayList<Position> result = new ArrayList<>();
-        if(!this.historyMoves.containsKey(this.grid)){
-            return result;
-        }
-
-        for(HistoryMove historyMove : this.historyMoves.get(this.grid)){
-            if(historyMove.isComplete){
-                result.add(historyMove.position);
-            }
-        }
-        return result;
+    protected Set<String> getPossiblePlays(Position position){
+        Set<String> possiblePlays = this.grid.getPossiblePlays(position);
+        possiblePlays.removeAll(getHistoryInsert(position));
+        return possiblePlays;
     }
 
-    protected String chooseRandomValue(Set<String> possiblePlays){
+    protected String chooseRandomSymbol(Set<String> possiblePlays){
         Random random = new Random();
         String[] possiblePlaysArray = possiblePlays.toArray(new String[0]);
         int randomIndex = random.nextInt(possiblePlays.size());
         return possiblePlaysArray[randomIndex];
+    }
+
+    protected Position chooseRandomPosition(Set<Position> positions) {
+        if (positions.isEmpty()) {
+            throw new IllegalArgumentException("[Solver] Positions must not be empty");
+        }
+        Random random = new Random();
+        List<Position> positionList = new ArrayList<>(positions);
+        int randomIndex = random.nextInt(positionList.size());
+        return positionList.get(randomIndex);
     }
 }
