@@ -21,7 +21,7 @@ public class WaveFunctionCollapse extends Solver {
     private void fillEntropy(){
         for(int y=0; y<grid.getSize().getY(); y++){
             for(int x=0; x<grid.getSize().getX(); x++){
-                entropy[y][x] = this.grid.getPossiblePlays(new Position(x, y)).size();
+                this.entropy[y][x] = this.getPossiblePlays(new Position(x, y)).size();
             }
         }
     }
@@ -43,63 +43,66 @@ public class WaveFunctionCollapse extends Solver {
             this.historyInserts.get(this.grid).put(lastMovePosition, new HashSet<>());
         }
         this.historyInserts.get(this.grid).get(lastMovePosition).add(lastSymbolInserted);
-        this.propagateEntropy(lastSymbolInserted, lastMovePosition, 1);
+        this.propagateEntropy(lastSymbolInserted, lastMovePosition, false);
     }
 
     @Override
     protected void insertSymbol(String symbol, Position position){
-        this.grid.insertSymbol(symbol, position);
-        this.lastInserts.add(position);
-        this.propagateEntropy(symbol, position, -1);
+        super.insertSymbol(symbol, position);
+        this.propagateEntropy(symbol, position, true);
     }
 
+    @Override
     public void solve() {
         while (!this.grid.isComplete()) {
             Entropy cellsEntropy = this.getPositionsMinimumEntropy();
             Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
-            this.printEntropy();
+//            this.printEntropy();
             if (positionsMinimumEntropy.isEmpty()) {
                 if (!this.lastInserts.isEmpty()) {
                     this.rollBack();
+                    System.out.println("Rollback no position");
                 } else {
                     System.out.println("Impossible to solve... Exiting");
                     break;
                 }
             } else {
-                if(cellsEntropy.getEntropy() == 0){
+                if (cellsEntropy.getEntropy() <= 0) {
                     this.rollBack();
-                    continue;
+                    System.out.println("Rollback entropy");
+                } else {
+                    Position randomPosition = this.chooseRandomPosition(positionsMinimumEntropy);
+                    Set<String> possiblePlays = this.getPossiblePlays(randomPosition);
+                    String randomSymbol = this.chooseRandomSymbol(possiblePlays);
+                    this.insertSymbol(randomSymbol, randomPosition);
+                    System.out.println("Insert " + randomSymbol + " in " + randomPosition);
                 }
-                Position randomPosition = this.chooseRandomPosition(positionsMinimumEntropy);
-                Set<String> possiblePlays = this.grid.getPossiblePlays(randomPosition);
-                String randomSymbol = this.chooseRandomSymbol(possiblePlays);
-                this.insertSymbol(randomSymbol, randomPosition);
             }
-            this.grid.print();
+//            this.grid.print();
+//            try {
+//                sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
-        this.grid.print();
+//        this.grid.print();
     }
 
-    private Entropy getPositionsMinimumEntropy(){
+    private Entropy getPositionsMinimumEntropy() {
         Entropy cellsEntropy = new Entropy();
-        for(int y=0; y<this.grid.getSize().getY(); y++){
-            for(int x=0; x<this.grid.getSize().getX(); x++){
-                Position position = new Position(x,y);
-                System.out.println(position);
-                System.out.println(this.grid.getSymbol(position));
-                System.out.println(this.entropy[y][x]);
-                if(!this.grid.isInsideGrid(position) || this.grid.getSymbol(position) != null) {
-                    System.out.println("Yes");
+        for (int y = 0; y < this.grid.getSize().getY(); y++) {
+            for (int x = 0; x < this.grid.getSize().getX(); x++) {
+                Position position = new Position(x, y);
+                if (!this.grid.isInsideGrid(position) || this.grid.getSymbol(position) != null) {
                     continue;
                 }
-                int alreadyDone = this.getHistoryInsert(position).size();
-                cellsEntropy.addCell(this.entropy[y][x] - alreadyDone, position);
+                cellsEntropy.addCell(this.entropy[y][x], position);
             }
         }
         return cellsEntropy;
     }
 
-    private void propagateEntropy(String symbol, Position position, int value){
+    private void propagateEntropy(String symbol, Position position, boolean isInsert){
         Set<Position> positions = new HashSet<>();
         ArrayList<Integer> idRules = this.grid.getCell(position).getIdRules();
         for(int idRule : idRules){
@@ -114,14 +117,15 @@ public class WaveFunctionCollapse extends Solver {
         for(Position positionEntropy : positions){
             int x = positionEntropy.getX();
             int y = positionEntropy.getY();
-            this.entropy[y][x] = this.entropy[y][x] + value;
+
+            this.entropy[y][x] = this.getPossiblePlays(positionEntropy).size();
         }
     }
 
     public void printEntropy() {
-        for (int y = 0; y < entropy.length; y++) {
-            for (int x = 0; x < entropy[y].length; x++) {
-                System.out.print(entropy[y][x] + " ");
+        for (int[] ints : entropy) {
+            for (int anInt : ints) {
+                System.out.print(anInt + " ");
             }
             System.out.println();
         }

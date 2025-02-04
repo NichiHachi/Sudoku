@@ -9,10 +9,6 @@ import java.util.Set;
 public class SudokuClassic extends Sudoku {
     public SudokuClassic(int size, Position offset){
         super(size, generateSymbols(size), offset);
-    }
-
-    public SudokuClassic(int size, int offset){
-        this(size, new Position(offset));
 
         int blockSize = (int) Math.sqrt(size);
         if(size % blockSize > 0){
@@ -28,6 +24,10 @@ public class SudokuClassic extends Sudoku {
 
         super.addRowRules();
         super.addColumnRules();
+    }
+
+    public SudokuClassic(int size, int offset){
+        this(size, new Position(offset));
     }
 
     public SudokuClassic(int size) {
