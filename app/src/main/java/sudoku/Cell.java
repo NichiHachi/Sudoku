@@ -1,7 +1,5 @@
 package sudoku;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
 
 public class Cell {
@@ -38,7 +36,7 @@ public class Cell {
         this.value = value;
     }
 
-    public String getValue() {
+    public String getSymbol() {
         return this.value;
     }
 
@@ -50,7 +48,7 @@ public class Cell {
         return this.idRules.get(index);
     }
 
-    public void resetValue() {
+    public void resetSymbol() {
         this.value = null;
     }
 

@@ -104,6 +104,10 @@ public class Grid {
         return this.gridCell[position.getY()][position.getX()];
     }
 
+    public Rule getRule(int index){
+        return this.rules.get(index);
+    }
+
     public void print() {
         for (Cell[] cellLine : this.gridCell) {
             for (Cell cell : cellLine) {
@@ -111,7 +115,7 @@ public class Grid {
                     System.out.print("  ");
                 } else {
                     String color = getColor(cell.getNumberOfRules());
-                    System.out.print(color + (cell.getValue() != null ? cell.getValue() + " " : "- ") + "\u001B[0m");
+                    System.out.print(color + (cell.getSymbol() != null ? cell.getSymbol() + " " : "- ") + "\u001B[0m");
                 }
             }
             System.out.println();
@@ -158,13 +162,28 @@ public class Grid {
         return true;
     }
 
-    private String getSymbol(Position position){
-        int x = position.getX();
-        int y = position.getY();
-        return this.gridCell[y][x].getValue();
+    public ArrayList<Set<String>> getSymbols(){
+        return this.symbols;
     }
 
-    private boolean isInsideGrid(Position position){
+    public Set<String> getSymbols(int index){
+        return this.symbols.get(index);
+    }
+
+    public void resetSymbol(Position position){
+        this.getCell(position).resetSymbol();
+    }
+
+    public String getSymbol(Position position){
+        if(isInsideGrid(position)){
+            return null;
+        }
+        int x = position.getX();
+        int y = position.getY();
+        return this.gridCell[y][x].getSymbol();
+    }
+
+    public boolean isInsideGrid(Position position){
         return position.getX() >= 0 && position.getY() >= 0
                 && position.getX() < this.size.getX() && position.getY() < this.size.getY()
                 && this.gridCell[position.getY()][position.getX()] != null;
@@ -181,7 +200,7 @@ public class Grid {
     public boolean isComplete(){
         for(int y=0; y<this.size.getY(); y++){
             for(int x=0; x<this.size.getX(); x++){
-                if(this.gridCell[y][x] != null && this.gridCell[y][x].getValue() == null){
+                if(this.gridCell[y][x] != null && this.gridCell[y][x].getSymbol() == null){
                     return false;
                 }
             }
@@ -208,7 +227,7 @@ public class Grid {
     public Set<String> getPossiblePlays(Position position){
         int x = position.getX();
         int y = position.getY();
-        if(!this.isInsideGrid(position) || this.gridCell[y][x].getValue() != null || this.gridCell[y][x].getIdRules().isEmpty()){
+        if(!this.isInsideGrid(position) || this.gridCell[y][x].getSymbol() != null || this.gridCell[y][x].getIdRules().isEmpty()){
             return new HashSet<>();
         }
 
@@ -247,13 +266,13 @@ public class Grid {
         for (int y = 0; y < this.size.getY(); y++) {
             for (int x = 0; x < this.size.getX(); x++) {
                 Cell cell = this.gridCell[y][x];
-                result = 31 * result + (cell != null && cell.getValue() != null ? cell.getValue().hashCode() : 0);
+                result = 31 * result + (cell != null && cell.getSymbol() != null ? cell.getSymbol().hashCode() : 0);
             }
         }
         return result;
     }
 
-    String getColor(int ruleCount) {
+    private static String getColor(int ruleCount) {
         String[] colors = {
                 "\u001B[38;5;231m", // White
                 "\u001B[38;5;226m", // Yellow
@@ -271,10 +290,5 @@ public class Grid {
                 "\u001B[38;5;118m"  // Light Green
         };
         return colors[ruleCount % colors.length];
-    }
-
-
-    public ArrayList<Set<String>> getSymbols(){
-        return this.symbols;
     }
 }

@@ -14,10 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Sudoku {
-    private int size;
-    private Position offsetPosition;
-    private ArrayList<Rule> rules;
-    private Set<String> symbols;
+    protected int size;
+    protected Position offsetPosition;
+    protected ArrayList<Rule> rules;
+    protected Set<String> symbols;
 
     public Sudoku(int size, Set<String> symbols, Position offsetPosition){
         if(symbols.size() < size){
