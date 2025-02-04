@@ -208,10 +208,36 @@ classDiagram
         Entropy positionsMinimumEntropy
     }
 
+    BlockRule  ..>  Position : «create»
     BlockRule  -->  Rule
     Grid  -->  Builder
+    Builder  ..>  Grid : «create»
+    Builder "1" *--> "sudokus *" Sudoku
+    ColumnRule  ..>  Position : «create»
     ColumnRule  -->  Rule
+    Entropy "1" *--> "positionCells *" Position
+    Grid  ..>  Cell : «create»
+    Grid "1" *--> "gridCell *" Cell
+    Grid "1" *--> "size 1" Position
+    Grid  ..>  Position : «create»
+    Grid "1" *--> "rules *" Rule
+    Main  ..>  Builder : «create»
+    Main  ..>  SudokuClassic : «create»
+    Main  ..>  WaveFunctionCollapse : «create»
+    RowRule  ..>  Position : «create»
     RowRule  -->  Rule
+    Rule "1" *--> "rulePositions *" Position
+    Solver "1" *--> "historyInserts *" Grid
+    Solver "1" *--> "lastInserts *" Position
+    Sudoku  ..>  ColumnRule : «create»
+    Sudoku "1" *--> "offsetPosition 1" Position
+    Sudoku  ..>  Position : «create»
+    Sudoku  ..>  RowRule : «create»
+    Sudoku "1" *--> "rules *" Rule
+    SudokuClassic  ..>  BlockRule : «create»
+    SudokuClassic  ..>  Position : «create»
     SudokuClassic  -->  Sudoku
+    WaveFunctionCollapse  ..>  Entropy : «create»
+    WaveFunctionCollapse  ..>  Position : «create»
     WaveFunctionCollapse  -->  Solver
 ```
