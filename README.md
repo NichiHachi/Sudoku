@@ -48,74 +48,71 @@ classDiagram
     }
     class Builder {
         + Builder()
-        + addSudokus(ArrayList~Sudoku~) Builder
-        + build() Grid
         + addSudoku(Sudoku) Builder
+        + build() Grid
+        + addSudokus(ArrayList~Sudoku~) Builder
     }
     class Cell {
-        + Cell(ArrayList~Integer~)
-        + Cell(Integer)
         + Cell()
-        - String value
+        + Cell(Integer)
+        + Cell(ArrayList~Integer~)
         - ArrayList~Integer~ idRules
-        + insertValue(String) void
+        - String symbol
+        + getIdRule(int) int
+        + insertSymbol(String) void
         + deleteRule(Integer) void
         + addRule(Integer) void
-        + getIdRule(int) int
-        + resetValue() void
+        + resetSymbol() void
         ArrayList~Integer~ idRules
         int numberOfRules
-        String value
-    }
-    class CellsEntropy {
-        + CellsEntropy(int, Position)
-        + CellsEntropy()
-        - int entropy
-        - ArrayList~Position~ positionCells
-        + merge(CellsEntropy) void
-        + addCell(int, Position) void
-        int entropy
-        ArrayList~Position~ positionCells
+        String symbol
     }
     class ColumnRule {
         + ColumnRule()
         + ColumnRule(Position, int)
         + ColumnRule(Position, Position)
     }
+    class Entropy {
+        + Entropy(int, Position)
+        + Entropy()
+        - int entropy
+        - Set~Position~ positionCells
+        + merge(Entropy) void
+        + addCell(int, Position) void
+        int entropy
+        Set~Position~ positionCells
+    }
     class Grid {
-        + Grid()
         + Grid(Builder)
+        + Grid()
+        - ArrayList~Rule~ rules
         - ArrayList~Set~String~~ symbols
         - Position size
-        + getCell(Position) Cell
-        - handleInsertValue(String, Position) void
-        + playTerminal() void
-        - getSymbol(Position) String
-        + insertSymbol(String, Position) void
-        - canInsertValue(String, Position) boolean
-        + mergeSudokus(ArrayList~Sudoku~, Position) void
-        - isInsideGrid(Position) boolean
-        + countPossiblePlays(Position) int
-        ~ getColor(int) String
-        + getPossiblePlays(Position) Set~String~
-        + addRule(Rule) void
-        - containRule(Rule) boolean
+        + isInsideGrid(Position) boolean
         - removeCell(Position) void
-        + hashCode() int
-        + symbolLeftRule(Rule) Set~String~
+        + playTerminal() void
+        - canInsertValue(String, Position) boolean
+        - handleInsertValue(String, Position) void
         + initCells() void
         + print() void
+        + insertSymbol(String, Position) void
+        + getPossiblePlays(Position) Set~String~
+        + getSymbol(Position) String
+        + countPossiblePlays(Position) int
+        + getCell(Position) Cell
+        - getColor(int) String
+        + addRule(Rule) void
+        + hashCode() int
+        + mergeSudokus(ArrayList~Sudoku~, Position) void
+        - containRule(Rule, int) boolean
+        + symbolUsed(Rule) Set~String~
+        + getSymbols(int) Set~String~
+        + resetSymbol(Position) void
+        + getRule(int) Rule
+        Position size
+        ArrayList~Rule~ rules
         boolean complete
         ArrayList~Set~String~~ symbols
-        Position size
-    }
-    class HistoryMove {
-        + HistoryMove(String, Position)
-        + HistoryMove()
-        + HistoryMove(Set~String~, Position)
-        + completed() void
-        + equals(Set~String~) boolean
-        + add(String) void
     }
     class Main {
         + Main()
@@ -126,88 +123,89 @@ classDiagram
         + Position(int)
         - int x
         - int y
-        + hashCode() int
-        + toString() String
-        + addX(int) Position
-        + equals(Object) boolean
-        + add(Position) Position
-        + max(Position) Position
-        + addXi(int) void
         + addYi(int) void
-        + addY(int) Position
-        + addi(Position) void
-        + add(int) Position
+        + add(Position) Position
+        + hashCode() int
+        + max(Position) Position
         + min(Position) Position
+        + add(int) Position
+        + toString() String
+        + addi(Position) void
+        + addY(int) Position
+        + addXi(int) void
         + negative() Position
+        + equals(Object) boolean
+        + addX(int) Position
         int x
         int y
     }
-    class PreviousState {
-        + PreviousState(Position, String, ArrayList~Set~String~~)
-        + toString() String
-    }
     class RowRule {
+        + RowRule(Position, int)
         + RowRule(Position, Position)
         + RowRule()
-        + RowRule(Position, int)
     }
     class Rule {
-        ~ Rule(Position)
         ~ Rule()
+        ~ Rule(Position)
         ~ Rule(Set~Position~)
-        - Set~Position~ rulePositions
         - int indexSymbols
+        - Set~Position~ rulePositions
+        + toString() String
         + add(Position) void
         + offsetRepositioning(Position) void
-        + toString() String
         int indexSymbols
         Set~Position~ rulePositions
     }
     class Solver {
         # Solver(Grid)
-        # chooseRandomValue(Set~String~) String
+        # chooseRandomSymbol(Set~String~) String
+        # rollBack() void
         + solve() void
-        # getHistoryMoveFromPosition(Position) HistoryMove
-        # rollBack(PreviousState) void
-        ArrayList~Position~ positionsCompleted
+        # getPossiblePlays(Position) Set~String~
+        # insertSymbol(String, Position) void
+        # getHistoryInsert(Position) Set~String~
+        # chooseRandomPosition(Set~Position~) Position
     }
     class Sudoku {
-        + Sudoku(int, Set~String~, Position)
-        + Sudoku(int, Set~String~, int)
-        + Sudoku(int, Set~String~)
-        + Sudoku(int, Set~String~, ArrayList~Rule~, int)
-        + Sudoku(int, Set~String~, ArrayList~Rule~)
         + Sudoku(int, Set~String~, ArrayList~Rule~, Position)
-        - int size
-        - Position offsetPosition
-        - ArrayList~Rule~ rules
-        - Set~String~ symbols
+        + Sudoku(int, Set~String~, Position)
+        + Sudoku(int, Set~String~, ArrayList~Rule~)
+        + Sudoku(int, Set~String~, ArrayList~Rule~, int)
+        + Sudoku(int, Set~String~)
+        + Sudoku(int, Set~String~, int)
+        # Set~String~ symbols
+        # Position offsetPosition
+        # ArrayList~Rule~ rules
+        # int size
         + remove(Rule) void
-        + add(Rule) void
         + addColumnRules() void
-        - isInsideOfSudoku(Position) boolean
         + getRule(int) Rule
+        - isInsideOfSudoku(Position) boolean
+        + add(Rule) void
         + addRowRules() void
         Position minPosition
         Set~String~ symbols
-        Position offsetPosition
         int size
+        Position offsetPosition
         Position maxPosition
         ArrayList~Rule~ rules
         int numberRule
     }
     class SudokuClassic {
+        + SudokuClassic(int, Position)
         + SudokuClassic(int)
         + SudokuClassic(int, int)
-        + SudokuClassic(int, Position)
         - generateSymbols(int) Set~String~
     }
     class WaveFunctionCollapse {
         + WaveFunctionCollapse(Grid)
-        - chooseRandomCell(ArrayList~Position~) Position
+        # insertSymbol(String, Position) void
         + solve() void
-        Grid grid
-        CellsEntropy positionsMinimumEntropy
+        - fillEntropy() void
+        # rollBack() void
+        + printEntropy() void
+        - propagateEntropy(String, Position, boolean) void
+        Entropy positionsMinimumEntropy
     }
 
     BlockRule  -->  Rule
