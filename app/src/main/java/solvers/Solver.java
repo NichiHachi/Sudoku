@@ -18,6 +18,8 @@ public abstract class Solver {
 
     public abstract void solve();
 
+    public abstract int getNumberOfSolutions();
+
     protected void rollBack(){
         if (this.lastInserts.isEmpty()){
             return;
