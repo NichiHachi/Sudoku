@@ -12,8 +12,8 @@ public abstract class Solver {
 
     protected Solver(Grid grid){
         this.grid = grid;
-        lastInserts = new ArrayList<>();
-        historyInserts = new HashMap<>();
+        this.lastInserts = new ArrayList<>();
+        this.historyInserts = new HashMap<>();
     }
 
     public abstract void solve();
@@ -78,5 +78,9 @@ public abstract class Solver {
         List<Position> positionList = new ArrayList<>(positions);
         int randomIndex = random.nextInt(positionList.size());
         return positionList.get(randomIndex);
+    }
+
+    public void print(){
+        this.grid.print();
     }
 }

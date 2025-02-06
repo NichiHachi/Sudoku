@@ -17,7 +17,6 @@ public class WaveFunctionCollapse extends Solver {
         int sizeX = grid.getSize().getX();
         int sizeY = grid.getSize().getY();
         this.entropy = new int[sizeY][sizeX];
-        this.fillEntropy();
     }
 
     private void fillEntropy(){
@@ -61,6 +60,9 @@ public class WaveFunctionCollapse extends Solver {
 
     @Override
     public void solve() {
+        this.lastInserts = new ArrayList<>();
+        this.historyInserts = new HashMap<>();
+        this.fillEntropy();
         while (!this.grid.isComplete()) {
             Entropy cellsEntropy = this.getPositionsMinimumEntropy();
             Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
@@ -96,14 +98,17 @@ public class WaveFunctionCollapse extends Solver {
 
     @Override
     public int getNumberOfSolutions() {
-        int solutions = 0;
+        this.lastInserts = new ArrayList<>();
+        this.historyInserts = new HashMap<>();
+        this.fillEntropy();
+        Set<Integer> solutions = new HashSet<>();
         Entropy cellsEntropy = this.getPositionsMinimumEntropy();
         int entropy = cellsEntropy.getEntropy();
 
         do {
             Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
             if (this.grid.isComplete()) {
-                solutions++;
+                solutions.add(grid.hashCode());
                 this.rollBack();
             } else if (positionsMinimumEntropy.isEmpty()) {
                 this.rollBack();
@@ -121,7 +126,7 @@ public class WaveFunctionCollapse extends Solver {
             entropy = cellsEntropy.getEntropy();
         } while (!this.lastInserts.isEmpty() || entropy > 0);
 
-        return solutions;
+        return solutions.size();
     }
 
     private Entropy getPositionsMinimumEntropy() {
