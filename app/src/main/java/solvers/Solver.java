@@ -18,8 +18,8 @@ public abstract class Solver {
 
     protected Solver(Grid grid) {
         this.grid = grid;
-        lastInserts = new ArrayList<>();
-        historyInserts = new HashMap<>();
+        this.lastInserts = new ArrayList<>();
+        this.historyInserts = new HashMap<>();
     }
 
     public abstract void solve();
@@ -92,5 +92,9 @@ public abstract class Solver {
 
     public void setGrid(Grid grid) {
         this.grid = grid;
+    }
+
+    public void print(){
+        this.grid.print();
     }
 }
