@@ -94,6 +94,36 @@ public class WaveFunctionCollapse extends Solver {
 //        this.grid.print();
     }
 
+    @Override
+    public int getNumberOfSolutions() {
+        int solutions = 0;
+        Entropy cellsEntropy = this.getPositionsMinimumEntropy();
+        int entropy = cellsEntropy.getEntropy();
+
+        do {
+            Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
+            if (this.grid.isComplete()) {
+                solutions++;
+                this.rollBack();
+            } else if (positionsMinimumEntropy.isEmpty()) {
+                this.rollBack();
+            } else {
+                if (entropy <= 0) {
+                    this.rollBack();
+                } else {
+                    Position randomPosition = this.chooseRandomPosition(positionsMinimumEntropy);
+                    Set<String> possiblePlays = this.getPossiblePlays(randomPosition);
+                    String randomSymbol = this.chooseRandomSymbol(possiblePlays);
+                    this.insertSymbol(randomSymbol, randomPosition);
+                }
+            }
+            cellsEntropy = this.getPositionsMinimumEntropy();
+            entropy = cellsEntropy.getEntropy();
+        } while (!this.lastInserts.isEmpty() || entropy > 0);
+
+        return solutions;
+    }
+
     private Entropy getPositionsMinimumEntropy() {
         Entropy cellsEntropy = new Entropy();
         for (int y = 0; y < this.grid.getSize().getY(); y++) {

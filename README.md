@@ -10,8 +10,47 @@ Run the project :
 ./gradlew run --console=plain -q
 ```
 
-## Project structure
+## Wave Function Collapse
 
+This solver is based on [Maxim Gumin's work](https://github.com/mxgmn/WaveFunctionCollapse)
+
+1) **Check if the grid is complete** : The algorithm starts by checking if the grid is complete, if so, the algorithm terminates.  
+2) **Get positions with minimum entropy** : The algorithm calculates the entropy for each cell in the grid and identifies the positions with the minimum entropy using the `getPositionsMinimumEntropy()` method.  
+3) **Handle empty positions** : If there are no positions with minimum entropy, the algorithm rolls back the last move using the `rollBack()` method. If the rollback is not possible, the algorithm terminates.  
+4) **Handle zero or negative entropy** : If the minimum entropy is zero or negative, the algorithm rolls back the last move.  
+5) **Choose a random position and symbol** : The algorithm selects a random position from the positions with minimum entropy and then chooses a random symbol from the possible plays for that position.  
+6) **Insert the symbol** : The chosen symbol is inserted into the selected position and the entropy is propagated to update the grid's state.  
+7) **Repeat** : The algorithm repeats the above steps until the grid is complete.
+```mermaid
+sequenceDiagram
+    participant Solver
+    participant Grid
+    participant Entropy
+
+    Solver->>Grid: isComplete()
+    alt Grid is not complete
+        loop until Grid is complete
+            Solver->>Entropy: getPositionsMinimumEntropy()
+            Entropy->>Solver: positionsMinimumEntropy
+            alt positionsMinimumEntropy is empty
+                Solver->>Solver: rollBack()
+            else positionsMinimumEntropy is not empty
+                alt cellsEntropy.getEntropy() <= 0
+                    Solver->>Solver: rollBack()
+                else
+                    Solver->>Solver: chooseRandomPosition(positionsMinimumEntropy)
+                    Solver->>Solver: getPossiblePlays(randomPosition)
+                    Solver->>Solver: chooseRandomSymbol(possiblePlays)
+                    Solver->>Solver: insertSymbol(randomSymbol, randomPosition)
+                end
+            end
+        end
+    else Grid is complete
+        Solver->>Grid: print()
+    end
+```
+
+## Project structure
 ```
 sudoku/
 │
@@ -19,7 +58,7 @@ sudoku/
 ├── app/src
 │   ├── main/java/sudoku/
 │   │   ├── Grid.java
-│ [gradlew](gradlew)  │   ├── Cell.java
+│   │   ├── Cell.java
 │   │   ├── Constraint.java
 │   │   ├── Zone.java
 │   │   ├── Rule.java
