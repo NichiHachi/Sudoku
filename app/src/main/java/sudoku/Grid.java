@@ -307,11 +307,4 @@ public class Grid {
         this.gridCell[position.getY()][position.getX()] = cell;
     }
 
-    public Position getSize() {
-        return this.size;
-    }
-
-    public ArrayList<Rule> getRules() {
-        return this.rules;
-    }
 }

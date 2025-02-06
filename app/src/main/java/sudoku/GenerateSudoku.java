@@ -27,12 +27,17 @@ public class GenerateSudoku {
             int x = (int) (Math.random() * grid.getSize().getX());
             int y = (int) (Math.random() * grid.getSize().getY());
             Cell cell = grid.getCell(new Position(x, y));
-            if (cell.getSymbol() != null) {
+            if (cell != null && cell.getSymbol() != null) {
                 if (1 == 1) {
-                    grid.setCell(new Position(x, y), new Cell());
+                    grid.resetSymbol(new Position(x, y));
+
                     nbCellsDeleted++;
                 }
             }
         }
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 }

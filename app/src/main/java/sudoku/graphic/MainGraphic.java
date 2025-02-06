@@ -9,10 +9,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import solvers.Solver;
+import solvers.wfc.WaveFunctionCollapse;
+import sudoku.GenerateSudoku;
 import sudoku.Grid;
 import sudoku.Position;
-import sudoku.Rule;
-import sudoku.Sudoku;
+import sudoku.rule.BlockRule;
+import sudoku.rule.Rule;
+import sudoku.sudoku.SudokuClassic;
 
 public class MainGraphic {
 
@@ -31,15 +35,14 @@ public class MainGraphic {
     }
 
     public static void main(String[] args) {
-        Sudoku sudoku1 = new Sudoku(
-                new String[] { "1", "2", "3", "4", "5", "6" });
-        Sudoku sudoku2 = new Sudoku(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }, 1);
 
-        ArrayList<Sudoku> sudokus = new ArrayList<>();
-        sudokus.add(sudoku1);
-        sudokus.add(sudoku2);
-        Grid grid = new Grid(sudokus);
+        Grid grid = new Grid.Builder()
+                .addSudoku(new SudokuClassic(9)).addSudoku(new SudokuClassic(9, 1))
+                .build();
         grid.print();
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
+        sudokuGenerator.generateSudoku();
+        grid = sudokuGenerator.getGrid();
         MainGraphic main = new MainGraphic(grid);
         main.init();
     }
@@ -77,7 +80,7 @@ public class MainGraphic {
     private void initializeColors() {
         this.colors = new ArrayList<>();
         for (Rule rule : this.grid.getRules()) {
-            if (rule.isPrintable()) {
+            if (rule instanceof BlockRule) {
                 java.awt.Color randomColor = new java.awt.Color((int) (Math.random() * 0x1000000));
                 colors.add(randomColor);
             } else {
@@ -91,12 +94,13 @@ public class MainGraphic {
         frame.getContentPane().removeAll();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
-                sudoku.Cell cell = grid.getCell(new Position(x, y));
-                if (cell != null) {
 
-                    String value = cell.getValue();
+                if (grid.getCell(new Position(x, y)) != null) {
+
+                    String value = this.grid.getSymbol(new Position(x, y));
                     drawCell(x, y, value);
                 }
+
             }
         }
 
@@ -106,6 +110,8 @@ public class MainGraphic {
         solveButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
+                Solver solver = new WaveFunctionCollapse(grid);
+                solver.solve();
                 draw();
             }
         });
@@ -128,21 +134,6 @@ public class MainGraphic {
                     values[i] = String.valueOf(i + 1);
                 }
 
-                ArrayList<Sudoku> sudokus = new ArrayList<>();
-                if (multipleSudoku) {
-                    String nbSudoku = JOptionPane.showInputDialog(frame, "Entrez le nombre de Sudoku:");
-                    int nb = Integer.parseInt(nbSudoku);
-                    for (int i = 0; i < nb; i++) {
-                        String offsetXStr = JOptionPane.showInputDialog(frame,
-                                "Entrez l'offset pour le Sudoku " + (i + 1) + ":");
-                        int offsetX = Integer.parseInt(offsetXStr);
-                        sudokus.add(new Sudoku(values, offsetX));
-                    }
-                }
-                sudokus.add(new Sudoku(values));
-
-                Grid grid = new Grid(sudokus);
-                MainGraphic.this.grid = grid;
                 draw();
             }
         });
@@ -162,7 +153,7 @@ public class MainGraphic {
             int red = 0, green = 0, blue = 0;
             int count = 0;
             for (Integer idRule : c.getIdRules()) {
-                if (grid.getRules().get(idRule).isPrintable()) {
+                if (grid.getRules().get(idRule) instanceof BlockRule) {
                     java.awt.Color color = colors.get(idRule);
                     red += color.getRed();
                     green += color.getGreen();
@@ -180,7 +171,7 @@ public class MainGraphic {
             }
         } else {
             for (Integer idRule : c.getIdRules()) {
-                if (grid.getRules().get(idRule).isPrintable()) {
+                if (grid.getRules().get(idRule) instanceof BlockRule) {
                     cell.setOpaque(true);
                     java.awt.Color color = colors.get(idRule);
 
@@ -225,11 +216,11 @@ public class MainGraphic {
                     String value = input.toString();
                     if (!value.isEmpty() && clickedX != -1 && clickedY != -1) {
                         System.out.println("Cellule cliquée : (" + clickedX + ", " + clickedY + ")");
-                        MainGraphic.this.grid.insertValue(value, new Position(clickedX, clickedY));
+                        MainGraphic.this.grid.insertSymbol(value, new Position(clickedX, clickedY));
                         label.setText(value);
                         System.out.println(
                                 "Après insertion : "
-                                        + MainGraphic.this.grid.getCell(new Position(clickedX, clickedY)).getValue());
+                                        + MainGraphic.this.grid.getCell(new Position(clickedX, clickedY)).getSymbol());
                         MainGraphic.this.draw();
                         input.setLength(0);
                     }

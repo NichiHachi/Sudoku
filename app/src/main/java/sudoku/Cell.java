@@ -2,6 +2,9 @@ package sudoku;
 
 import java.util.ArrayList;
 
+import sudoku.rule.BlockRule;
+import sudoku.rule.Rule;
+
 public class Cell {
     private String symbol;
     private final ArrayList<Integer> idRules;
@@ -62,10 +65,9 @@ public class Cell {
     }
 
     public int getNumberOfPrintableRules(ArrayList<Rule> rules) {
-
         int count = 0;
         for (Integer idRule : this.idRules) {
-            if (rules.get(idRule).isPrintable()) {
+            if (rules.get(idRule) instanceof BlockRule) {
                 count++;
             }
         }
