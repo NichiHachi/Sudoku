@@ -1,10 +1,10 @@
 package sudoku.sudoku;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import sudoku.Position;
 import sudoku.rule.BlockRule;
 
@@ -22,8 +22,6 @@ public class SudokuClassic extends Sudoku {
             factors.add(number);
         }
 
-        Collections.shuffle(factors);
-
         while (factors.size() > 2) {
             int a = factors.remove(0);
             int b = factors.remove(0);
@@ -33,7 +31,12 @@ public class SudokuClassic extends Sudoku {
         if (factors.size() == 1) {
             factors.add(1);
         }
-
+        if (Math.random() > 0.5) {
+            int temp = factors.get(0);
+            factors.set(0, factors.get(1));
+            factors.set(1, temp);
+        }
+        System.out.println("Factors: " + factors);
         return factors;
     }
 
@@ -44,17 +47,13 @@ public class SudokuClassic extends Sudoku {
         for (int y = 0; y < size / blockSize.get(0); y++) {
             for (int x = 0; x < size / blockSize.get(1); x++) {
                 super.add(
-                    new BlockRule(
-                        new Position(
-                            x * blockSize.get(1),
-                            y * blockSize.get(0)
-                        ),
-                        new Position(
-                            (x + 1) * blockSize.get(1) - 1,
-                            (y + 1) * blockSize.get(0) - 1
-                        )
-                    )
-                );
+                        new BlockRule(
+                                new Position(
+                                        x * blockSize.get(1),
+                                        y * blockSize.get(0)),
+                                new Position(
+                                        (x + 1) * blockSize.get(1) - 1,
+                                        (y + 1) * blockSize.get(0) - 1)));
             }
         }
 
