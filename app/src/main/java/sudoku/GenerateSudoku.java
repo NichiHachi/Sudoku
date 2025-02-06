@@ -33,7 +33,11 @@ public class GenerateSudoku {
                     positions.add(new Position(x, y));
             }
         }
-        while (nbCells > 0 || positions.isEmpty()) {
+        if (positions.isEmpty()) {
+            System.out.println("No positions available to delete.");
+            return;
+        }
+        while (nbCells > 0 && !positions.isEmpty()) {
             int id = (int) (Math.random() * positions.size());
             Position position = positions.remove(id);
             Cell cell = solver.getGrid().getCell(position);

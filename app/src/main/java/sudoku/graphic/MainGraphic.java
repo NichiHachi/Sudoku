@@ -17,6 +17,7 @@ import sudoku.Position;
 import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 import sudoku.sudoku.SudokuClassic;
+import sudoku.sudoku.Sudoku;
 
 public class MainGraphic {
 
@@ -37,10 +38,13 @@ public class MainGraphic {
     public static void main(String[] args) {
 
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(9)).addSudoku(new SudokuClassic(9, 1))
+                .addSudoku(new Sudoku(6, new Position(5, 0)))
+                .addSudoku(new SudokuClassic(6, new Position(-5, 0)))
+                .addSudoku(new SudokuClassic(6, new Position(0, -5)))
+                .addSudoku(new SudokuClassic(6, new Position(0, 5)))
                 .build();
         grid.print();
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.3);
 
         sudokuGenerator.generateSudoku();
 
