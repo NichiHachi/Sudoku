@@ -42,13 +42,10 @@ public class MainGraphic {
         grid.print();
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
 
-        try {
-            sudokuGenerator.generateSudoku();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        sudokuGenerator.generateSudoku();
 
         grid = sudokuGenerator.getGrid();
+
         MainGraphic main = new MainGraphic(grid);
         main.init();
     }
