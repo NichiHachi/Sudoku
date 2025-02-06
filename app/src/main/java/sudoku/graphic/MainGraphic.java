@@ -40,8 +40,14 @@ public class MainGraphic {
                 .addSudoku(new SudokuClassic(9)).addSudoku(new SudokuClassic(9, 1))
                 .build();
         grid.print();
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
-        sudokuGenerator.generateSudoku();
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
+
+        try {
+            sudokuGenerator.generateSudoku();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
         grid = sudokuGenerator.getGrid();
         MainGraphic main = new MainGraphic(grid);
         main.init();

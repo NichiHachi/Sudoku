@@ -5,12 +5,15 @@ import sudoku.sudoku.SudokuClassic;
 public class Main {
     public static void main(String[] args) {
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(9))
+                .addSudoku(new SudokuClassic(6))
                 .build();
 
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.88);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
 
-        sudokuGenerator.generateSudoku();
+        try {
+            sudokuGenerator.generateSudoku();
+        } catch (Exception e) {
+        }
 
     }
 }

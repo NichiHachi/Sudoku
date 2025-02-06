@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 
-public class Cell {
+public class Cell implements Cloneable {
     private String symbol;
     private final ArrayList<Integer> idRules;
 
@@ -16,6 +16,14 @@ public class Cell {
     public Cell(Integer idRule) {
         this();
         this.idRules.add(idRule);
+    }
+
+    @Override
+    public Cell clone() throws CloneNotSupportedException {
+        Cell cell = (Cell) super.clone();
+        cell.symbol = this.symbol;
+        cell.idRules.addAll(this.idRules);
+        return cell;
     }
 
     public Cell() {

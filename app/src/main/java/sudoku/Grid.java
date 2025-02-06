@@ -9,7 +9,7 @@ import java.util.Set;
 import sudoku.rule.Rule;
 import sudoku.sudoku.Sudoku;
 
-public class Grid {
+public class Grid implements Cloneable {
     private final ArrayList<Rule> rules;
     private Position size;
     private Cell[][] gridCell;
@@ -54,6 +54,23 @@ public class Grid {
         public Grid build() {
             return new Grid(this);
         }
+    }
+
+    @Override
+    public Grid clone() throws CloneNotSupportedException {
+        Grid grid = new Grid();
+        grid.size = this.size;
+        grid.gridCell = new Cell[this.size.getY()][this.size.getX()];
+        grid.symbols.addAll(this.symbols);
+        grid.rules.addAll(this.rules);
+        for (int y = 0; y < this.size.getY(); y++) {
+            for (int x = 0; x < this.size.getX(); x++) {
+                if (this.gridCell[y][x] != null) {
+                    grid.gridCell[y][x] = this.gridCell[y][x].clone();
+                }
+            }
+        }
+        return grid;
     }
 
     public void mergeSudokus(ArrayList<Sudoku> sudokus, Position resizeVector) {
