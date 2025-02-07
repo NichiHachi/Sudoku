@@ -10,9 +10,9 @@ public class Main {
 
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
 
-        sudokuGenerator.generateSudoku();
+        // sudokuGenerator.generateSudoku();
 
-        for (int i = 2; i <= 10; i++) {
+        for (int i = 2; i <= 0; i++) {
             grid = new Grid.Builder()
                     .addSudoku(new SudokuClassic(i))
                     .build();
@@ -24,7 +24,8 @@ public class Main {
             SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + i + "*" + i + ".txt");
         }
 
-        Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
-        grid2.print();
+        // Grid grid2 =
+        // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
+        // grid2.print();
     }
 }
