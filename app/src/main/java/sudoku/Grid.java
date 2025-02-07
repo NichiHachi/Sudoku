@@ -3,6 +3,7 @@ package sudoku;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ public class Grid {
     private Position size;
     private Cell[][] gridCell;
     private final ArrayList<Set<String>> symbols;
+    private ArrayList<String> colors;
 
     public Grid() {
         this.rules = new ArrayList<>();
@@ -36,6 +38,22 @@ public class Grid {
 
         this.mergeSudokus(builder.sudokus, resizeVector);
         this.initCells();
+        this.colors = new ArrayList<>(this.rules.size());
+        System.out.println(this.rules.size());
+
+        for (int i = 0; i < this.rules.size(); i++) {
+            Rule rule = this.rules.get(i);
+            if (rule instanceof sudoku.rule.BlockRule) {
+                Random random = new Random();
+                int r = random.nextInt(256);
+                int g = random.nextInt(256);
+                int b = random.nextInt(256);
+                colors.add(i, String.format("\u001B[38;2;%d;%d;%dm", r, g, b));
+            } else {
+                colors.add(i, "\u001B[38;5;231m");
+            }
+
+        }
     }
 
     public static class Builder {
@@ -54,6 +72,7 @@ public class Grid {
         public Grid build() {
             return new Grid(this);
         }
+
     }
 
     public void mergeSudokus(ArrayList<Sudoku> sudokus, Position resizeVector) {
@@ -121,7 +140,14 @@ public class Grid {
                 if (cell == null) {
                     System.out.print("  ");
                 } else {
-                    String color = getColor(cell.getNumberOfRules());
+                    String color = "\u001B[38;5;231m";
+                    ArrayList<Integer> idRules = cell.getIdRules();
+                    for (int idRule : idRules) {
+                        if (rules.get(idRule) instanceof sudoku.rule.BlockRule) {
+                            color = colors.get(idRule);
+                            break;
+                        }
+                    }
                     System.out.print(color + (cell.getSymbol() != null ? cell.getSymbol() + " " : "- ") + "\u001B[0m");
                 }
             }

@@ -35,12 +35,10 @@ public class MainGraphic {
 
     public static void main(String[] args) {
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(7, new Position(5, 0)))
-                .addSudoku(new SudokuClassic(6, new Position(-5, 0)))
-
+                .addSudoku(new SudokuClassic(12, new Position(5, 0)))
                 .build();
         grid.print();
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.3);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.7);
 
         sudokuGenerator.generateSudoku();
 
