@@ -22,6 +22,13 @@ public class Grid {
         this.symbols = new ArrayList<>();
     }
 
+    public Grid(int sizeX, int sizeY) {
+        this();
+        this.size = new Position(sizeX, sizeY);
+        this.gridCell = new Cell[sizeY][sizeX];
+
+    }
+
     public Grid(Builder builder) {
         this();
 
@@ -41,6 +48,11 @@ public class Grid {
         this.colors = new ArrayList<>(this.rules.size());
         System.out.println(this.rules.size());
 
+        this.initColors();
+    }
+
+    public void initColors() {
+        this.colors = new ArrayList<>(this.rules.size());
         for (int i = 0; i < this.rules.size(); i++) {
             Rule rule = this.rules.get(i);
             if (rule instanceof sudoku.rule.BlockRule) {
@@ -333,4 +345,15 @@ public class Grid {
         this.gridCell[position.getY()][position.getX()] = cell;
     }
 
+    public void setRules(ArrayList<Rule> rules) {
+        this.rules.addAll(rules);
+    }
+
+    public ArrayList<Set<String>> getSymboles() {
+        return this.symbols;
+    }
+
+    public void setSymboles(ArrayList<Set<String>> symboles) {
+        this.symbols.addAll(symboles);
+    }
 }

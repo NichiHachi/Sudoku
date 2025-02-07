@@ -12,6 +12,7 @@ import solvers.wfc.WaveFunctionCollapse;
 import sudoku.GenerateSudoku;
 import sudoku.Grid;
 import sudoku.Position;
+import sudoku.SudokuImporter;
 import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 import sudoku.sudoku.Sudoku;
@@ -35,7 +36,7 @@ public class MainGraphic {
 
     public static void main(String[] args) {
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(12, new Position(5, 0)))
+                .addSudoku(new SudokuClassic(2, new Position(5, 0)))
                 .build();
         grid.print();
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.7);
@@ -44,7 +45,11 @@ public class MainGraphic {
 
         grid = sudokuGenerator.getGrid();
 
-        MainGraphic main = new MainGraphic(grid);
+        Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
+        GenerateSudoku sudokuGenerator2 = new GenerateSudoku(grid2, 0.7);
+        sudokuGenerator2.generateSudoku();
+        grid2 = sudokuGenerator2.getGrid();
+        MainGraphic main = new MainGraphic(grid2);
         main.init();
     }
 
