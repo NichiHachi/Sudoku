@@ -2,6 +2,9 @@ package sudoku;
 
 import java.util.ArrayList;
 
+import sudoku.rule.BlockRule;
+import sudoku.rule.Rule;
+
 public class Cell {
     private String symbol;
     private final ArrayList<Integer> idRules;
@@ -10,7 +13,7 @@ public class Cell {
         this.idRules = idRules;
     }
 
-    public Cell(Integer idRule){
+    public Cell(Integer idRule) {
         this();
         this.idRules.add(idRule);
     }
@@ -40,9 +43,10 @@ public class Cell {
         return this.symbol;
     }
 
-    public int getIdRule(int index){
-        if(index < 0 || index >= this.idRules.size()){
-            System.err.println("[Cell] getIdRule index out of range. Index: " + index + ", Size: " + this.idRules.size());
+    public int getIdRule(int index) {
+        if (index < 0 || index >= this.idRules.size()) {
+            System.err
+                    .println("[Cell] getIdRule index out of range. Index: " + index + ", Size: " + this.idRules.size());
             return -1;
         }
         return this.idRules.get(index);
@@ -56,7 +60,17 @@ public class Cell {
         return this.idRules;
     }
 
-    public int getNumberOfRules(){
+    public int getNumberOfRules() {
         return this.idRules.size();
+    }
+
+    public int getNumberOfPrintableRules(ArrayList<Rule> rules) {
+        int count = 0;
+        for (Integer idRule : this.idRules) {
+            if (rules.get(idRule) instanceof BlockRule) {
+                count++;
+            }
+        }
+        return count;
     }
 }

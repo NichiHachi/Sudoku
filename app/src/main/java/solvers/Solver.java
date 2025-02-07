@@ -1,16 +1,22 @@
 package solvers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import sudoku.Grid;
 import sudoku.Position;
-
-import java.util.*;
 
 public abstract class Solver {
     protected Grid grid;
     protected ArrayList<Position> lastInserts;
     protected Map<Grid, Map<Position, Set<String>>> historyInserts;
 
-    protected Solver(Grid grid){
+    protected Solver(Grid grid) {
         this.grid = grid;
         this.lastInserts = new ArrayList<>();
         this.historyInserts = new HashMap<>();
@@ -20,31 +26,31 @@ public abstract class Solver {
 
     public abstract int getNumberOfSolutions();
 
-    protected void rollBack(){
-        if (this.lastInserts.isEmpty()){
+    protected void rollBack() {
+        if (this.lastInserts.isEmpty()) {
             return;
         }
 
         Position lastMovePosition = this.lastInserts.removeLast();
-        String lastSymbolInserted =  this.grid.getSymbol(lastMovePosition);
+        String lastSymbolInserted = this.grid.getSymbol(lastMovePosition);
         this.grid.resetSymbol(lastMovePosition);
 
-        if(!this.historyInserts.containsKey(this.grid)){
+        if (!this.historyInserts.containsKey(this.grid)) {
             this.historyInserts.put(this.grid, new HashMap<>());
         }
-        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)){
+        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)) {
             this.historyInserts.get(this.grid).put(lastMovePosition, new HashSet<>());
         }
         this.historyInserts.get(this.grid).get(lastMovePosition).add(lastSymbolInserted);
     }
 
-    protected void insertSymbol(String symbol, Position position){
+    protected void insertSymbol(String symbol, Position position) {
         this.grid.insertSymbol(symbol, position);
         this.lastInserts.add(position);
     }
 
-    protected Set<String> getHistoryInsert(Position position){
-        if(!this.historyInserts.containsKey(this.grid)){
+    protected Set<String> getHistoryInsert(Position position) {
+        if (!this.historyInserts.containsKey(this.grid)) {
             return new HashSet<>();
         }
 
@@ -57,13 +63,13 @@ public abstract class Solver {
         return new HashSet<>();
     }
 
-    protected Set<String> getPossiblePlays(Position position){
+    protected Set<String> getPossiblePlays(Position position) {
         Set<String> possiblePlays = this.grid.getPossiblePlays(position);
         possiblePlays.removeAll(getHistoryInsert(position));
         return possiblePlays;
     }
 
-    protected String chooseRandomSymbol(Set<String> possiblePlays){
+    protected String chooseRandomSymbol(Set<String> possiblePlays) {
         Random random = new Random();
         String[] possiblePlaysArray = possiblePlays.toArray(new String[0]);
         int randomIndex = random.nextInt(possiblePlays.size());
@@ -78,6 +84,14 @@ public abstract class Solver {
         List<Position> positionList = new ArrayList<>(positions);
         int randomIndex = random.nextInt(positionList.size());
         return positionList.get(randomIndex);
+    }
+
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
     }
 
     public void print(){

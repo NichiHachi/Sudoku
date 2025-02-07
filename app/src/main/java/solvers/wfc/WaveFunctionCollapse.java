@@ -1,51 +1,53 @@
 package solvers.wfc;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import solvers.Solver;
 import sudoku.Grid;
 import sudoku.Position;
 import sudoku.rule.Rule;
 
-import java.util.*;
-
-import static java.lang.Thread.sleep;
-
 public class WaveFunctionCollapse extends Solver {
     int[][] entropy;
 
-    public WaveFunctionCollapse(Grid grid){
+    public WaveFunctionCollapse(Grid grid) {
         super(grid);
         int sizeX = grid.getSize().getX();
         int sizeY = grid.getSize().getY();
         this.entropy = new int[sizeY][sizeX];
     }
 
-    private void fillEntropy(){
-        for(int y=0; y<grid.getSize().getY(); y++){
-            for(int x=0; x<grid.getSize().getX(); x++){
+    private void fillEntropy() {
+        for (int y = 0; y < grid.getSize().getY(); y++) {
+            for (int x = 0; x < grid.getSize().getX(); x++) {
                 Position position = new Position(x, y);
-                if(grid.getCell(position) == null || grid.getSymbol(position) != null){
+                if (grid.getCell(position) == null || grid.getSymbol(position) != null) {
                     this.entropy[y][x] = -1;
                 } else {
                     this.entropy[y][x] = this.getPossiblePlays(position).size();
-                };
+                }
+                ;
             }
         }
     }
 
     @Override
-    protected void rollBack(){
-        if (this.lastInserts.isEmpty()){
+    protected void rollBack() {
+        if (this.lastInserts.isEmpty()) {
             return;
         }
 
         Position lastMovePosition = this.lastInserts.removeLast();
-        String lastSymbolInserted =  this.grid.getSymbol(lastMovePosition);
+        String lastSymbolInserted = this.grid.getSymbol(lastMovePosition);
         this.grid.resetSymbol(lastMovePosition);
 
-        if(!this.historyInserts.containsKey(this.grid)){
+        if (!this.historyInserts.containsKey(this.grid)) {
             this.historyInserts.put(this.grid, new HashMap<>());
         }
-        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)){
+        if (!this.historyInserts.get(this.grid).containsKey(lastMovePosition)) {
             this.historyInserts.get(this.grid).put(lastMovePosition, new HashSet<>());
         }
         this.historyInserts.get(this.grid).get(lastMovePosition).add(lastSymbolInserted);
@@ -53,7 +55,7 @@ public class WaveFunctionCollapse extends Solver {
     }
 
     @Override
-    protected void insertSymbol(String symbol, Position position){
+    protected void insertSymbol(String symbol, Position position) {
         super.insertSymbol(symbol, position);
         this.propagateEntropy(symbol, position, true);
     }
@@ -66,7 +68,7 @@ public class WaveFunctionCollapse extends Solver {
         while (!this.grid.isComplete()) {
             Entropy cellsEntropy = this.getPositionsMinimumEntropy();
             Set<Position> positionsMinimumEntropy = cellsEntropy.getPositionCells();
-//            this.printEntropy();
+            // this.printEntropy();
             if (positionsMinimumEntropy.isEmpty()) {
                 if (!this.lastInserts.isEmpty()) {
                     this.rollBack();
@@ -84,16 +86,16 @@ public class WaveFunctionCollapse extends Solver {
                     this.insertSymbol(randomSymbol, randomPosition);
                 }
             }
-//            this.grid.print();
-//            this.printEntropy();
-//            System.out.println((this.lastInserts.getLast()));
-//            try {
-//                sleep(50);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            // this.grid.print();
+            // this.printEntropy();
+            // System.out.println((this.lastInserts.getLast()));
+            // try {
+            // sleep(50);
+            // } catch (InterruptedException e) {
+            // e.printStackTrace();
+            // }
         }
-//        this.grid.print();
+        // this.grid.print();
     }
 
     @Override
@@ -146,19 +148,19 @@ public class WaveFunctionCollapse extends Solver {
         return cellsEntropy;
     }
 
-    private void propagateEntropy(String symbol, Position position, boolean isInsert){
+    private void propagateEntropy(String symbol, Position position, boolean isInsert) {
         Set<Position> positions = new HashSet<>();
         ArrayList<Integer> idRules = this.grid.getCell(position).getIdRules();
-        for(int idRule : idRules){
+        for (int idRule : idRules) {
             Rule rule = this.grid.getRule(idRule);
             int indexSymbols = rule.getIndexSymbols();
-            if(!this.grid.getSymbols(indexSymbols).contains(symbol)){
+            if (!this.grid.getSymbols(indexSymbols).contains(symbol)) {
                 continue;
             }
             positions.addAll(rule.getRulePositions());
         }
 
-        for(Position positionEntropy : positions){
+        for (Position positionEntropy : positions) {
             int x = positionEntropy.getX();
             int y = positionEntropy.getY();
 

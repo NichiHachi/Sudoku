@@ -1,9 +1,9 @@
 package sudoku.rule;
 
-import sudoku.Position;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import sudoku.Position;
 
 public class Rule {
     private Set<Position> rulePositions;
@@ -18,7 +18,7 @@ public class Rule {
         this.add(position);
     }
 
-    Rule(Set<Position> positions){
+    public Rule(Set<Position> positions){
         this();
         this.rulePositions.addAll(positions);
     }
