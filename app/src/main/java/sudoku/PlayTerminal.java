@@ -43,6 +43,30 @@ public class PlayTerminal {
         String filePath = scanner.nextLine();
         this.grid = SudokuImporter.importFromFile(filePath);
         System.out.println("Grille importée avec succès.");
+        System.out.println("Voulez-vous résoudre la grille ? (O/N)");
+        String solve = scanner.nextLine();
+        if (solve.equalsIgnoreCase("O")) {
+            double difficulty = -1;
+            while (difficulty < 0.0 || difficulty > 1.0) {
+                System.out.print("Entrez le niveau de difficulté (0.0 à 1.0): ");
+                if (scanner.hasNextDouble()) {
+                    difficulty = scanner.nextDouble();
+                    scanner.nextLine();
+                    if (difficulty < 0.0 || difficulty > 1.0) {
+                        System.out.println("Veuillez entrer une valeur entre 0.0 et 1.0.");
+                    }
+                } else {
+                    System.out.println("Entrée invalide. Veuillez entrer un nombre décimal.");
+                    scanner.next();
+                }
+            }
+            GenerateSudoku generator = new GenerateSudoku(this.grid, difficulty);
+            generator.generateSudoku();
+            this.grid = generator.getGrid();
+            this.grid.print();
+            System.out.println("Grille générée avec succès.");
+            gridResolution(scanner);
+        }
     }
 
     private void generateGrids(Scanner scanner) {

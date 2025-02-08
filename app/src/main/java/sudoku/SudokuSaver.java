@@ -30,7 +30,11 @@ public class SudokuSaver {
             writer.write("Rules Cell:\n");
             for (int y = 0; y < grid.getSize().getY(); y++) {
                 for (int x = 0; x < grid.getSize().getX(); x++) {
-                    ArrayList<Integer> rules = grid.getCell(new Position(x, y)).getIdRules();
+                    Cell cell = grid.getCell(new Position(x, y));
+                    if (cell == null) {
+                        continue;
+                    }
+                    ArrayList<Integer> rules = cell.getIdRules();
                     String rulesString = rules != null ? rules.toString() : "No rules";
                     writer.write(String.format("Cell (%d, %d): %s\n", x, y, rulesString));
                 }

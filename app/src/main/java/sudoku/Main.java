@@ -4,27 +4,18 @@ import sudoku.sudoku.SudokuClassic;
 
 public class Main {
     public static void main(String[] args) {
-        Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(2))
-                .build();
+        // PlayTerminal playTerminal = new PlayTerminal();
+        // playTerminal.start();
 
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
+        Grid grid = new Grid.Builder().addSudoku(new SudokuClassic(9, new Position(-3, 0)))
+                .addSudoku(new SudokuClassic(9, new Position(0, 3))).build();
 
-        sudokuGenerator.generateSudoku();
+        GenerateSudoku generator = new GenerateSudoku(grid, 0);
+        generator.generateSudoku();
+        grid = generator.getGrid();
+        SudokuSaver.save(grid, "sudoku.txt");
 
-        for (int i = 2; i <= 10; i++) {
-            grid = new Grid.Builder()
-                    .addSudoku(new SudokuClassic(i))
-                    .build();
-
-            sudokuGenerator = new GenerateSudoku(grid, 0);
-
-            sudokuGenerator.generateSudoku();
-
-            SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + i + "*" + i + ".txt");
-        }
-
-        Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
+        Grid grid2 = SudokuImporter.importFromFile("sudoku.txt");
         grid2.print();
     }
 }
