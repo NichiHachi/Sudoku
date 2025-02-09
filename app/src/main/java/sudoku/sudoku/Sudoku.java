@@ -16,6 +16,7 @@ public class Sudoku {
     protected Position offsetPosition;
     protected ArrayList<Rule> rules;
     protected Set<String> symbols;
+    protected boolean randomBlock = false;
 
     public Sudoku(int size, Set<String> symbols, Position offsetPosition) {
         if (symbols.size() < size) {
@@ -79,6 +80,10 @@ public class Sudoku {
     private boolean isInsideOfSudoku(Position position) {
         return position.getX() >= 0 && position.getY() >= 0
                 && position.getX() < this.size && position.getY() < this.size;
+    }
+
+    public boolean isRandomBlock() {
+        return this.randomBlock;
     }
 
     public void add(Rule rule) {

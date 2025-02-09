@@ -243,7 +243,7 @@ public class GridGraphic {
                             int gridSize = Integer.parseInt(gridSizeStr);
 
                             grid = new Grid.Builder()
-                                    .addSudoku(new SudokuClassic(gridSize))
+                                    .addSudoku(new SudokuClassic(gridSize, new Position(0, 0), true))
                                     .build();
                         }
 

@@ -16,6 +16,7 @@ public class Grid {
     private Cell[][] gridCell;
     private final ArrayList<Set<String>> symbols;
     private ArrayList<String> colors;
+    private boolean randomBlock = false;
 
     public Grid() {
         this.rules = new ArrayList<>();
@@ -37,6 +38,9 @@ public class Grid {
         for (Sudoku sudoku : builder.sudokus) {
             minPos = minPos.min(sudoku.getMinPosition());
             maxPos = maxPos.max(sudoku.getMaxPosition());
+            if (sudoku.isRandomBlock()) {
+                this.randomBlock = true;
+            }
         }
         Position resizeVector = minPos.negative();
         this.size = maxPos.add(resizeVector);
@@ -66,6 +70,10 @@ public class Grid {
             }
 
         }
+    }
+
+    public boolean isRandomBlock() {
+        return this.randomBlock;
     }
 
     public static class Builder {

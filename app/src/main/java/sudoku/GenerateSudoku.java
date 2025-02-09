@@ -35,6 +35,9 @@ public class GenerateSudoku {
         solver.solve();
         long endTime = System.currentTimeMillis();
         System.out.println("Total solve time: " + (endTime - startTime) + "ms");
+        if (grid.isRandomBlock()) {
+            switchRandomCase();
+        }
         deleteRandomCells((int) (grid.getNbOfCellNotNull() * this.percentage));
         solver.getGrid().print();
     }
@@ -73,6 +76,53 @@ public class GenerateSudoku {
             }
         }
 
+    }
+
+    public void switchRandomCase() {
+        System.out.println("Switching random cases");
+        ArrayList<Position> switchedPositions = new ArrayList<>();
+        System.out.println(grid.getSize().getX());
+        System.out.println(grid.getSize().getY());
+        for (int i = 0; i < grid.getSize().getX(); i++) {
+            for (int j = 0; j < grid.getSize().getY(); j++) {
+
+                Position position = new Position(i, j);
+                if (switchedPositions.contains(position)) {
+                    continue;
+                }
+                Position position2 = findCaseWithSameSymbol(position);
+                if (position2 != null && !switchedPositions.contains(position2)) {
+                    Cell cell = grid.getCell(position);
+                    Cell cell2 = grid.getCell(position2);
+                    if (cell != null && cell2 != null) {
+                        System.out.println("Switching " + position + " with " + position2);
+                        grid.setCell(position, cell2);
+                        grid.setCell(position2, cell);
+                        switchedPositions.add(position);
+                        switchedPositions.add(position2);
+                    }
+
+                }
+            }
+        }
+    }
+
+    public Position findCaseWithSameSymbol(Position position) {
+        String symbol = grid.getSymbol(position);
+        ArrayList<Position> positions = new ArrayList<>();
+        for (int i = 0; i < grid.getSize().getX(); i++) {
+            for (int j = 0; j < grid.getSize().getY(); j++) {
+                if (grid.getSymbol(new Position(i, j)) != null && grid.getSymbol(new Position(i, j)).equals(symbol)
+                        && !position.equals(new Position(i, j))) {
+                    positions.add(new Position(i, j));
+                }
+            }
+        }
+        if (positions.isEmpty()) {
+            return null;
+        }
+        int randomIndex = (int) (Math.random() * positions.size());
+        return positions.get(randomIndex);
     }
 
     public Grid getGrid() {
