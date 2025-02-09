@@ -2,14 +2,11 @@ package solvers.backtrack;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.ArrayList;
 
 import solvers.Solver;
 import sudoku.Cell;
 import sudoku.Grid;
-import sudoku.rule.Rule;
 import sudoku.Position;
-
 
 public class Backtrack extends Solver {
     private int attempts = 0;

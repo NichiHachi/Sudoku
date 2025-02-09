@@ -38,7 +38,9 @@ public class SudokuImporter {
                         symbolSet.add(symbol.trim());
                     }
                     symbols.add(symbolSet);
-                    grid.setSymboles(symbols);
+                    if (grid != null) {
+                        grid.setSymboles(symbols);
+                    }
                     System.out.println("Symbols: " + symbols);
                     continue;
                 } else if (line.startsWith("Rules:")) {
@@ -99,7 +101,9 @@ public class SudokuImporter {
                             }
 
                             Cell cell = new Cell(cellValues);
-                            grid.setCell(new Position(cellX, cellY), cell);
+                            if (grid != null) {
+                                grid.setCell(new Position(cellX, cellY), cell);
+                            }
                         } while ((line = reader.readLine()) != null && !line.isEmpty());
                     }
                 } else if (readingGrid) {
@@ -111,7 +115,9 @@ public class SudokuImporter {
                             String symbol = symboles[x];
 
                             if (!symbol.equals("-")) {
-                                grid.insertSymbol(symbol, new Position(x, y));
+                                if (grid != null) {
+                                    grid.insertSymbol(symbol, new Position(x, y));
+                                }
                             }
                         }
                         y++;
