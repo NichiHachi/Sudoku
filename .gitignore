@@ -36,5 +36,4 @@ bin/
 # Ignore Gradle build output directory
 build
 
-# Ignore saved files
-app/src/main/java/sudokuSaved/sudoku*.txt
+

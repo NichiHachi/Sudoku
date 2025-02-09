@@ -1,7 +1,7 @@
 package sudoku;
 
+import sudoku.configuration.SudokuSaver;
 import sudoku.sudoku.SudokuClassic;
-import sudoku.terminal.PlayTerminal;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,12 +10,16 @@ public class Main {
                 .build();
 
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
+        for (int i = 2; i <= 20; i++) {
+            grid = new Grid.Builder()
+                    .addSudoku(new SudokuClassic(i))
+                    .build();
+            sudokuGenerator = new GenerateSudoku(grid, 0);
+            sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
+            grid = sudokuGenerator.getGrid();
+            SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + grid.getSize().getX() + "par"
+                    + grid.getSize().getY() + ".txt");
 
-        sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
-
-        PlayTerminal playTerminal = new PlayTerminal();
-        playTerminal.start();        // Grid grid2 =
-        // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
-        // grid2.print();
+        }
     }
 }
