@@ -213,7 +213,11 @@ public class GridGraphic {
                                 frame,
                                 "Y a-t-il plusieurs Sudoku? (oui/non):");
 
-                        System.out.println(multipleSudokuStr);
+                        if (multipleSudokuStr == null) {
+                            System.out.println("Action annulée par l'utilisateur.");
+                            return;
+                        }
+
                         boolean multipleSudoku = multipleSudokuStr.equalsIgnoreCase(
                                 "oui");
                         System.out.println("Multiple Sudoku: " + multipleSudoku);
