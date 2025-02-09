@@ -1,8 +1,10 @@
 package sudoku;
 
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import solvers.Solver;
 import solvers.backtrack.Backtrack;
 import solvers.backtrack.BacktrackOptimized;
@@ -11,8 +13,7 @@ import solvers.wfc.WaveFunctionCollapse;
 public class GenerateSudoku {
 
     private static final Logger logger = LoggerFactory.getLogger(
-        GenerateSudoku.class
-    );
+            GenerateSudoku.class);
     private final Grid grid;
     private final double percentage;
     private Solver solver;
@@ -34,13 +35,15 @@ public class GenerateSudoku {
             case BACKTRACK -> new Backtrack(grid);
             case BACKTRACK_OPTIMIZED -> new BacktrackOptimized(grid);
             default -> throw new IllegalArgumentException(
-                "Unknown solver type"
-            );
+                    "Unknown solver type");
         };
         long startTime = System.currentTimeMillis();
         solver.solve();
         long endTime = System.currentTimeMillis();
         logger.info("Total solve time: " + (endTime - startTime) + "ms");
+        if (solver.getGrid().isRandomBlock()) {
+            switchRandomCase();
+        }
         deleteRandomCells((int) (grid.getNbOfCellNotNull() * this.percentage));
     }
 
@@ -49,10 +52,9 @@ public class GenerateSudoku {
         ArrayList<Position> positions = new ArrayList<>();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
-                if (
-                    solver.getGrid().getCell(new Position(x, y)) != null &&
-                    solver.getGrid().getSymbol(new Position(x, y)) != null
-                ) positions.add(new Position(x, y));
+                if (solver.getGrid().getCell(new Position(x, y)) != null &&
+                        solver.getGrid().getSymbol(new Position(x, y)) != null)
+                    positions.add(new Position(x, y));
             }
         }
         if (positions.isEmpty()) {
@@ -74,8 +76,7 @@ public class GenerateSudoku {
                     solver.getGrid().insertSymbol(symbol, position);
                 } else {
                     logger.debug(
-                        "Deleting cell " + position + " with symbol " + symbol
-                    );
+                            "Deleting cell " + position + " with symbol " + symbol);
                     nbCells--;
                 }
             }

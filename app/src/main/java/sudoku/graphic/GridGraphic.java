@@ -245,6 +245,7 @@ public class GridGraphic {
                                     frame,
                                     "Est-ce que la grille à des blocs aléatoires? (oui/non):");
                             boolean randomBloc = randomBlocStr.equalsIgnoreCase("oui");
+                            System.out.println("Random Bloc: " + randomBloc);
 
                             grid = new Grid.Builder()
                                     .addSudoku(new SudokuClassic(gridSize, new Position(0, 0), randomBloc))
