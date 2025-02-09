@@ -229,7 +229,7 @@ public class MainGraphic {
         addSolveButtons();
 
         javax.swing.JButton generateButton = new javax.swing.JButton("Générer");
-        generateButton.setBounds(frame.getWidth() - 150, 110, 100, 50);
+        generateButton.setBounds(frame.getWidth() - 300, 300, 200, 50);
         generateButton.addActionListener(
                 new java.awt.event.ActionListener() {
                     @Override
@@ -282,7 +282,7 @@ public class MainGraphic {
                         }
 
                         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
-                        sudokuGenerator.generateSudoku();
+                        sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
                         grid = sudokuGenerator.getGrid();
 
                         calculateStartCoordinates();
