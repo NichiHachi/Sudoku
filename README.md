@@ -22,32 +22,25 @@ This solver is based on [Maxim Gumin's work](https://github.com/mxgmn/WaveFuncti
 6) **Insert the symbol** : The chosen symbol is inserted into the selected position and the entropy is propagated to update the grid's state.  
 7) **Repeat** : The algorithm repeats the above steps until the grid is complete.
 ```mermaid
-sequenceDiagram
-    participant Solver
-    participant Grid
-    participant Entropy
-
-    Solver->>Grid: isComplete()
-    alt Grid is not complete
-        loop until Grid is complete
-            Solver->>Entropy: getPositionsMinimumEntropy()
-            Entropy->>Solver: positionsMinimumEntropy
-            alt positionsMinimumEntropy is empty
-                Solver->>Solver: rollBack()
-            else positionsMinimumEntropy is not empty
-                alt cellsEntropy.getEntropy() <= 0
-                    Solver->>Solver: rollBack()
-                else
-                    Solver->>Solver: chooseRandomPosition(positionsMinimumEntropy)
-                    Solver->>Solver: getPossiblePlays(randomPosition)
-                    Solver->>Solver: chooseRandomSymbol(possiblePlays)
-                    Solver->>Solver: insertSymbol(randomSymbol, randomPosition)
-                end
-            end
-        end
-    else Grid is complete
-        Solver->>Grid: print()
-    end
+---
+title: Diagramme d'activité de WaveFunctionCollapseBacktracking
+---
+stateDiagram-v2
+    [*] --> Initialiser
+    Initialiser --> RemplirEntropie
+    RemplirEntropie --> VérifierComplétion
+    VérifierComplétion --> [*] : La grille est résolue
+    VérifierComplétion --> ObtenirPositionsMinimaleEntropie : La grille n'est pas résolue
+    ObtenirPositionsMinimaleEntropie --> VérifierPositions
+    VérifierPositions --> Rollback : Pas de position de libre
+    VérifierPositions --> VérifierEntropie
+    VérifierEntropie --> Rollback : L'entropie minimal est inférieur ou égal à 0
+    VérifierEntropie --> ChoisirPositionAléatoire
+    ChoisirPositionAléatoire --> ChoisirSymboleAléatoire
+    ChoisirSymboleAléatoire --> InsérerSymbole
+    InsérerSymbole --> PropagerEntropie
+    PropagerEntropie --> VérifierComplétion
+    Rollback --> PropagerEntropie
 ```
 
 ## Project structure
