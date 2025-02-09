@@ -63,21 +63,8 @@ public class GridGraphic {
         int gridWidth = this.grid.getSize().getX() * cellSize;
         int gridHeight = this.grid.getSize().getY() * cellSize;
 
-        System.out.println("Cell: " + cellSize);
-
-        System.out.println("Frame width: " + frameWidth);
-        System.out.println("Frame height: " + frameHeight);
-        System.out.println("Grid width: " + this.grid.getSize().getX());
-        System.out.println("Grid height: " + this.grid.getSize().getY());
-        System.out.println("Grid width: " + gridWidth);
-        System.out.println("Grid height: " + gridHeight);
-
         this.startX = (frameWidth - gridWidth) / 2;
         this.startY = (frameHeight - gridHeight) / 2;
-
-        System.out.println("Cell size: " + this.cellSize);
-        System.out.println("Start X: " + this.startX);
-        System.out.println("Start Y: " + this.startY);
     }
 
     private void initializeColors() {
