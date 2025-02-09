@@ -356,4 +356,16 @@ public class Grid {
     public void setSymboles(ArrayList<Set<String>> symboles) {
         this.symbols.addAll(symboles);
     }
+
+    public int getNbOfCellNotNull() {
+        int count = 0;
+        for (int y = 0; y < this.size.getY(); y++) {
+            for (int x = 0; x < this.size.getX(); x++) {
+                if (this.gridCell[y][x] != null) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 }

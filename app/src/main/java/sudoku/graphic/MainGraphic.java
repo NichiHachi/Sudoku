@@ -1,5 +1,6 @@
 package sudoku.graphic;
 
+import sudoku.GenerateSudoku;
 import sudoku.Grid;
 import sudoku.Position;
 import sudoku.sudoku.SudokuClassic;
@@ -8,17 +9,19 @@ public class MainGraphic {
 
     public static void main(String[] args) {
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(16, new Position(-12, 0)))
-                .addSudoku(new SudokuClassic(16, new Position(0, -12)))
-                .addSudoku(new SudokuClassic(16, new Position(12, 0)))
-                .addSudoku(new SudokuClassic(16, new Position(0, 12)))
+                .addSudoku(new SudokuClassic(9, new Position(-8, 0)))
+                .addSudoku(new SudokuClassic(9, new Position(0, -8)))
+                .addSudoku(new SudokuClassic(9, new Position(8, 0)))
+                .addSudoku(new SudokuClassic(9, new Position(0, 8)))
                 .build();
         // grid.print();
-        // GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.9);
+        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
 
-        // sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
+        sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
 
-        // grid = sudokuGenerator.getGrid();
+        grid = sudokuGenerator.getGrid();
+
+        grid.print();
 
         // Grid grid2 =
         // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
