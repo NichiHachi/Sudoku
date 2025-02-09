@@ -12,19 +12,8 @@ public class Main {
 
         sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
 
-        for (int i = 2; i <= 0; i++) {
-            grid = new Grid.Builder()
-                    .addSudoku(new SudokuClassic(i))
-                    .build();
-
-            sudokuGenerator = new GenerateSudoku(grid, 0);
-
-            sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
-
-            SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + i + "*" + i + ".txt");
-        }
-
-        // Grid grid2 =
+        PlayTerminal playTerminal = new PlayTerminal();
+        playTerminal.start();        // Grid grid2 =
         // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
         // grid2.print();
     }

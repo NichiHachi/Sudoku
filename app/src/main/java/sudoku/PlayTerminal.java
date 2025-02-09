@@ -23,6 +23,7 @@ public class PlayTerminal {
             System.out.println("2. Générer des grilles");
             System.out.println("3. Quitter");
             System.out.print("Choisissez une option: ");
+
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -164,10 +165,5 @@ public class PlayTerminal {
         this.solver.solve();
         System.out.println("Grille résolue avec succès.");
         this.solver.getGrid().print();
-    }
-
-    public static void main(String[] args) {
-        PlayTerminal terminal = new PlayTerminal();
-        terminal.start();
     }
 }
