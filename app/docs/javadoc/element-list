@@ -1,0 +1,10 @@
+solvers
+solvers.backtrack
+solvers.wfc
+sudoku
+sudoku.configuration
+sudoku.graphic
+sudoku.rule
+sudoku.sudoku
+sudoku.terminal
+utils

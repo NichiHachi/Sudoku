@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"solvers"},{"l":"solvers.backtrack"},{"l":"solvers.wfc"},{"l":"sudoku"},{"l":"sudoku.configuration"},{"l":"sudoku.graphic"},{"l":"sudoku.rule"},{"l":"sudoku.sudoku"},{"l":"sudoku.terminal"},{"l":"utils"}];updateSearchResults();

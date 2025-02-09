@@ -41,6 +41,7 @@ javadoc {
     source = sourceSets.main.allJava
     options.memberLevel = JavadocMemberLevel.PRIVATE // includes private members
     options.encoding = 'UTF-8'
+    destinationDir = file("./docs/javadoc") 
 }
 
 application {
