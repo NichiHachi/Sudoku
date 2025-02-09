@@ -3,15 +3,13 @@
  */
 package sudoku.sudoku;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import sudoku.Position;
 import sudoku.rule.ColumnRule;
 import sudoku.rule.RowRule;
 import sudoku.rule.Rule;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Sudoku {
     protected int size;
@@ -19,8 +17,8 @@ public class Sudoku {
     protected ArrayList<Rule> rules;
     protected Set<String> symbols;
 
-    public Sudoku(int size, Set<String> symbols, Position offsetPosition){
-        if(symbols.size() < size){
+    public Sudoku(int size, Set<String> symbols, Position offsetPosition) {
+        if (symbols.size() < size) {
             System.err.println("[Sudoku] There are less value than there is columns and lines on the Sudoku");
             return;
         }
@@ -31,7 +29,7 @@ public class Sudoku {
         this.symbols = symbols;
     }
 
-    public Sudoku(int size, Set<String> symbols, int offset){
+    public Sudoku(int size, Set<String> symbols, int offset) {
         this(size, symbols, new Position(offset));
     }
 
@@ -39,7 +37,7 @@ public class Sudoku {
         this(size, symbols, new Position(0));
     }
 
-    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules, Position diagonalOffsetPosition){
+    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules, Position diagonalOffsetPosition) {
         this(size, symbols, diagonalOffsetPosition);
 
         for (Rule rule : rules) {
@@ -50,15 +48,15 @@ public class Sudoku {
         this.addRowRules();
     }
 
-    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules, int offset){
+    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules, int offset) {
         this(size, symbols, rules, new Position(offset));
     }
 
-    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules){
+    public Sudoku(int size, Set<String> symbols, ArrayList<Rule> rules) {
         this(size, symbols, rules, new Position(0));
     }
 
-    public ArrayList<Rule> getRules(){
+    public ArrayList<Rule> getRules() {
         return this.rules;
     }
 
@@ -66,26 +64,26 @@ public class Sudoku {
         return this.size;
     }
 
-    public Position getMinPosition(){
+    public Position getMinPosition() {
         return this.offsetPosition;
     }
 
-    public Position getMaxPosition(){
+    public Position getMaxPosition() {
         return this.offsetPosition.add(this.size);
     }
 
-    public Position getOffsetPosition(){
+    public Position getOffsetPosition() {
         return this.offsetPosition;
     }
 
-    private boolean isInsideOfSudoku(Position position){
+    private boolean isInsideOfSudoku(Position position) {
         return position.getX() >= 0 && position.getY() >= 0
                 && position.getX() < this.size && position.getY() < this.size;
     }
 
-    public void add(Rule rule){
-        for(Position pos : rule.getRulePositions()){
-            if (!isInsideOfSudoku(pos)){
+    public void add(Rule rule) {
+        for (Position pos : rule.getRulePositions()) {
+            if (!isInsideOfSudoku(pos)) {
                 System.err.println("Sudoku: The rule is outside of the Sudoku, cancel the addition of the rule.");
                 return;
             }
@@ -93,31 +91,31 @@ public class Sudoku {
         this.rules.add(rule);
     }
 
-    public int getNumberRule(){
+    public int getNumberRule() {
         return this.rules.size();
     }
 
-    public Rule getRule(int index){
+    public Rule getRule(int index) {
         return this.rules.get(index);
     }
 
-    public void remove(Rule rule){
+    public void remove(Rule rule) {
         this.rules.remove(rule);
     }
 
-    public void addColumnRules(){
-        for(int x=0; x<this.size; x++){
-            this.add(new ColumnRule(new Position(x,0), this.size));
+    public void addColumnRules() {
+        for (int x = 0; x < this.size; x++) {
+            this.add(new ColumnRule(new Position(x, 0), this.size));
         }
     }
 
-    public void addRowRules(){
-        for(int y=0; y<this.size; y++){
-            this.add(new RowRule(new Position(0,y), this.size));
+    public void addRowRules() {
+        for (int y = 0; y < this.size; y++) {
+            this.add(new RowRule(new Position(0, y), this.size));
         }
     }
 
-    public Set<String> getSymbols(){
+    public Set<String> getSymbols() {
         return this.symbols;
     }
 }
