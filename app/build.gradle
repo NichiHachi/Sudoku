@@ -57,7 +57,7 @@ task runTerminal(type: JavaExec) {
     group = "application"
     description = "Runs the terminal application"
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'sudoku.MainTerminal'
+    mainClass = 'sudoku.terminal.MainTerminal'
     standardInput = System.in
 
 }

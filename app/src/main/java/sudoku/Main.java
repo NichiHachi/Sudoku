@@ -1,6 +1,7 @@
 package sudoku;
 
 import sudoku.sudoku.SudokuClassic;
+import sudoku.terminal.PlayTerminal;
 
 public class Main {
     public static void main(String[] args) {

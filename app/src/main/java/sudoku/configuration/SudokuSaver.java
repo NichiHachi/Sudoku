@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.configuration;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import sudoku.Cell;
+import sudoku.Grid;
+import sudoku.Position;
 import sudoku.rule.Rule;
 
 public class SudokuSaver {

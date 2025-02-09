@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.terminal;
 
 public class MainTerminal {
 

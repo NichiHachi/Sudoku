@@ -1,9 +1,13 @@
-package sudoku;
+package sudoku.terminal;
 
 import java.util.Scanner;
 
 import solvers.Solver;
 import solvers.wfc.WaveFunctionCollapse;
+import sudoku.GenerateSudoku;
+import sudoku.Grid;
+import sudoku.Position;
+import sudoku.configuration.SudokuImporter;
 import sudoku.sudoku.SudokuClassic;
 
 public class PlayTerminal {

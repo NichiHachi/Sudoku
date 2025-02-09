@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.configuration;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import sudoku.Cell;
+import sudoku.Grid;
+import sudoku.Position;
 import sudoku.rule.Rule;
 
 public class SudokuImporter {
