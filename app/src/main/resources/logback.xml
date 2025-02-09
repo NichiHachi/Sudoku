@@ -1,0 +1,18 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{0}): %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set specific level for your solver package -->
+    <logger name="solvers" level="${LOG_LEVEL:-WARN}"/>
+
+    <!-- Add this line to enable Grid logging -->
+    <logger name="sudoku.Grid" level="INFO"/>
+
+    <!-- Set default level to WARN for all other packages -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

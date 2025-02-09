@@ -2,24 +2,36 @@ package solvers.backtrack;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import solvers.Solver;
 import sudoku.Cell;
 import sudoku.Grid;
 import sudoku.Position;
+import utils.Colors;
 
 public class Backtrack extends Solver {
+
+    private static final Logger logger = LoggerFactory.getLogger(
+        Backtrack.class
+    );
     private int attempts = 0;
 
     public Backtrack(Grid grid) {
         super(grid);
+        logger.info(
+            Colors.GREEN + "Starting Backtrack solver..." + Colors.RESET
+        );
     }
 
     @Override
     public void solve() {
-        System.out.println("Backtracking");
+        logger.info(
+            Colors.INFO_COLOR +
+            "Starting backtracking process..." +
+            Colors.RESET
+        );
         backtrack(0, 0);
-        // grid.print();
     }
 
     @Override
@@ -34,6 +46,13 @@ public class Backtrack extends Solver {
 
         // Backtracking is done.
         if (row >= size.getY()) {
+            logger.info(
+                Colors.SUCCESS_COLOR +
+                "Solution found after " +
+                attempts +
+                " attempts!" +
+                Colors.RESET
+            );
             return true;
         }
 
@@ -48,16 +67,39 @@ public class Backtrack extends Solver {
             return backtrack(nextRow, nextCol);
         }
 
-        Set<String> possibleValues = new HashSet<>(grid.getPossiblePlays(currentPos));
+        Set<String> possibleValues = new HashSet<>(
+            grid.getPossiblePlays(currentPos)
+        );
 
         for (String value : possibleValues) {
             grid.insertSymbol(value, currentPos);
 
-            System.out.println("Attempts: " + attempts + " at " + row + " " + col + " with " + value);
+            logger.debug(
+                Colors.INFO_COLOR +
+                "Attempt #" +
+                attempts +
+                " at position (" +
+                row +
+                "," +
+                col +
+                ") with value " +
+                Colors.HIGHLIGHT_COLOR +
+                value +
+                Colors.RESET
+            );
             if (backtrack(nextRow, nextCol)) {
                 return true;
             }
-
+            logger.debug(
+                Colors.WARNING_COLOR +
+                "Rolling back from position (" +
+                row +
+                "," +
+                col +
+                ") | Value: " +
+                value +
+                Colors.RESET
+            );
             currentCell.resetSymbol();
         }
 

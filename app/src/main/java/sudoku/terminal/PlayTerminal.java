@@ -1,7 +1,6 @@
 package sudoku.terminal;
 
 import java.util.Scanner;
-
 import solvers.Solver;
 import solvers.backtrack.BacktrackOptimized;
 import solvers.wfc.WaveFunctionCollapse;
@@ -12,12 +11,27 @@ import sudoku.configuration.SudokuImporter;
 import sudoku.sudoku.SudokuClassic;
 
 public class PlayTerminal {
+
     private Grid grid;
     private Solver solver;
 
     public PlayTerminal() {
         this.grid = null;
         this.solver = null;
+    }
+
+    public static void configureLogging(String[] args) {
+        String logLevel = "WARN";
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--debug") || args[i].equals("-d")) {
+                logLevel = "DEBUG";
+            } else if (args[i].equals("--info") || args[i].equals("-i")) {
+                logLevel = "INFO";
+            } else if (args[i].equals("--trace") || args[i].equals("-t")) {
+                logLevel = "TRACE";
+            }
+        }
+        System.setProperty("LOG_LEVEL", logLevel);
     }
 
     public void start() {
@@ -39,7 +53,9 @@ public class PlayTerminal {
                     System.out.println("Au revoir!");
                     return;
                 }
-                default -> System.out.println("Option invalide. Veuillez réessayer.");
+                default -> System.out.println(
+                    "Option invalide. Veuillez réessayer."
+                );
             }
         }
     }
@@ -54,20 +70,31 @@ public class PlayTerminal {
         if (solve.equalsIgnoreCase("O")) {
             double difficulty = -1;
             while (difficulty < 0.0 || difficulty > 1.0) {
-                System.out.print("Entrez le niveau de difficulté (0.0 à 1.0): ");
+                System.out.print(
+                    "Entrez le niveau de difficulté (0.0 à 1.0): "
+                );
                 if (scanner.hasNextDouble()) {
                     difficulty = scanner.nextDouble();
                     scanner.nextLine();
                     if (difficulty < 0.0 || difficulty > 1.0) {
-                        System.out.println("Veuillez entrer une valeur entre 0.0 et 1.0.");
+                        System.out.println(
+                            "Veuillez entrer une valeur entre 0.0 et 1.0."
+                        );
                     }
                 } else {
-                    System.out.println("Entrée invalide. Veuillez entrer un nombre décimal.");
+                    System.out.println(
+                        "Entrée invalide. Veuillez entrer un nombre décimal."
+                    );
                     scanner.next();
                 }
             }
-            GenerateSudoku generator = new GenerateSudoku(this.grid, difficulty);
-            generator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
+            GenerateSudoku generator = new GenerateSudoku(
+                this.grid,
+                difficulty
+            );
+            generator.generateSudoku(
+                GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED
+            );
             this.grid = generator.getGrid();
             this.grid.print();
             System.out.println("Grille générée avec succès.");
@@ -83,10 +110,14 @@ public class PlayTerminal {
                 difficulty = scanner.nextDouble();
                 scanner.nextLine();
                 if (difficulty < 0.0 || difficulty > 1.0) {
-                    System.out.println("Veuillez entrer une valeur entre 0.0 et 1.0.");
+                    System.out.println(
+                        "Veuillez entrer une valeur entre 0.0 et 1.0."
+                    );
                 }
             } else {
-                System.out.println("Entrée invalide. Veuillez entrer un nombre décimal.");
+                System.out.println(
+                    "Entrée invalide. Veuillez entrer un nombre décimal."
+                );
                 scanner.next();
             }
         }
@@ -100,7 +131,9 @@ public class PlayTerminal {
                 System.out.print("Entrez la taille de la grille : ");
                 int size = scanner.nextInt();
                 scanner.nextLine();
-                this.grid = new Grid.Builder().addSudoku(new SudokuClassic(size)).build();
+                this.grid = new Grid.Builder()
+                    .addSudoku(new SudokuClassic(size))
+                    .build();
             }
             case 2 -> {
                 System.out.print("Entrez le nombre de grilles : ");
@@ -108,16 +141,27 @@ public class PlayTerminal {
                 scanner.nextLine();
                 Grid.Builder builder = new Grid.Builder();
                 for (int i = 0; i < size; i++) {
-                    System.out.println("Entrer la taille de la grille " + (i + 1) + " : ");
+                    System.out.println(
+                        "Entrer la taille de la grille " + (i + 1) + " : "
+                    );
                     int gridSize = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.println("Entrer la position X de la grille " + (i + 1) + " : ");
+                    System.out.println(
+                        "Entrer la position X de la grille " + (i + 1) + " : "
+                    );
                     int offsetX = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.println("Entrer la position Y de la grille " + (i + 1) + " : ");
+                    System.out.println(
+                        "Entrer la position Y de la grille " + (i + 1) + " : "
+                    );
                     int offsetY = scanner.nextInt();
                     scanner.nextLine();
-                    builder.addSudoku(new SudokuClassic(gridSize, new Position(offsetX, offsetY)));
+                    builder.addSudoku(
+                        new SudokuClassic(
+                            gridSize,
+                            new Position(offsetX, offsetY)
+                        )
+                    );
                 }
                 this.grid = builder.build();
             }
@@ -149,12 +193,16 @@ public class PlayTerminal {
             System.out.println("Aucune grille à résoudre.");
             return;
         }
-        System.out.println("Voulez vous utilisez un solver ou la résoudre vous même ? (S/M)");
+        System.out.println(
+            "Voulez vous utilisez un solver ou la résoudre vous même ? (S/M)"
+        );
         String choice = scanner.nextLine();
         if (choice.equals("M")) {
             this.grid.playTerminal();
         }
-        System.out.println("Quel solver voulez vous utiliser ? (1: WFC) (2: Backtracking)");
+        System.out.println(
+            "Quel solver voulez vous utiliser ? (1: WFC) (2: Backtracking)"
+        );
         int solverChoice = scanner.nextInt();
         scanner.nextLine();
         switch (solverChoice) {
