@@ -7,48 +7,70 @@ Bulid the project :
 
 Run the project :
 ```bash
-./gradlew run --console=plain -q
+./gradlew runGraphic // Run the project in a graphical interface without any prints
+./gradlew runGraphic --args="--info" // Run the project in a graphical interface with minimal information
+./gradlew runGraphic --args="--debug" // Run the project in a graphical interface with steps by steps prints
+./gradlew runTerminal --console=plain -q // Run the project in a terminal
+```
+
+Documentation :
+```bash
+./gradlew javadoc
 ```
 
 ## Wave Function Collapse
 
 This solver is based on [Maxim Gumin's work](https://github.com/mxgmn/WaveFunctionCollapse)
 
-1) **Check if the grid is complete** : The algorithm starts by checking if the grid is complete, if so, the algorithm terminates.  
-2) **Get positions with minimum entropy** : The algorithm calculates the entropy for each cell in the grid and identifies the positions with the minimum entropy using the `getPositionsMinimumEntropy()` method.  
-3) **Handle empty positions** : If there are no positions with minimum entropy, the algorithm rolls back the last move using the `rollBack()` method. If the rollback is not possible, the algorithm terminates.  
-4) **Handle zero or negative entropy** : If the minimum entropy is zero or negative, the algorithm rolls back the last move.  
-5) **Choose a random position and symbol** : The algorithm selects a random position from the positions with minimum entropy and then chooses a random symbol from the possible plays for that position.  
-6) **Insert the symbol** : The chosen symbol is inserted into the selected position and the entropy is propagated to update the grid's state.  
+1) **Check if the grid is complete** : The algorithm starts by checking if the grid is complete, if so, the algorithm terminates.
+2) **Get positions with minimum entropy** : The algorithm calculates the entropy for each cell in the grid and identifies the positions with the minimum entropy using the `getPositionsMinimumEntropy()` method.
+3) **Handle empty positions** : If there are no positions with minimum entropy, the algorithm rolls back the last move using the `rollBack()` method. If the rollback is not possible, the algorithm terminates.
+4) **Handle zero or negative entropy** : If the minimum entropy is zero or negative, the algorithm rolls back the last move.
+5) **Choose a random position and symbol** : The algorithm selects a random position from the positions with minimum entropy and then chooses a random symbol from the possible plays for that position.
+6) **Insert the symbol** : The chosen symbol is inserted into the selected position and the entropy is propagated to update the grid's state.
 7) **Repeat** : The algorithm repeats the above steps until the grid is complete.
 ```mermaid
-sequenceDiagram
-    participant Solver
-    participant Grid
-    participant Entropy
-
-    Solver->>Grid: isComplete()
-    alt Grid is not complete
-        loop until Grid is complete
-            Solver->>Entropy: getPositionsMinimumEntropy()
-            Entropy->>Solver: positionsMinimumEntropy
-            alt positionsMinimumEntropy is empty
-                Solver->>Solver: rollBack()
-            else positionsMinimumEntropy is not empty
-                alt cellsEntropy.getEntropy() <= 0
-                    Solver->>Solver: rollBack()
-                else
-                    Solver->>Solver: chooseRandomPosition(positionsMinimumEntropy)
-                    Solver->>Solver: getPossiblePlays(randomPosition)
-                    Solver->>Solver: chooseRandomSymbol(possiblePlays)
-                    Solver->>Solver: insertSymbol(randomSymbol, randomPosition)
-                end
-            end
-        end
-    else Grid is complete
-        Solver->>Grid: print()
-    end
+---
+title: Diagramme d'activité de WaveFunctionCollapseBacktracking
+---
+stateDiagram-v2
+    [*] --> Initialiser
+    Initialiser --> RemplirEntropie
+    RemplirEntropie --> VérifierComplétion
+    VérifierComplétion --> [*] : La grille est résolue
+    VérifierComplétion --> ObtenirPositionsMinimaleEntropie : La grille n'est pas résolue
+    ObtenirPositionsMinimaleEntropie --> VérifierPositions
+    VérifierPositions --> Rollback : Pas de position de libre
+    VérifierPositions --> VérifierEntropie
+    VérifierEntropie --> Rollback : L'entropie minimal est inférieur ou égal à 0
+    VérifierEntropie --> ChoisirPositionAléatoire
+    ChoisirPositionAléatoire --> ChoisirSymboleAléatoire
+    ChoisirSymboleAléatoire --> InsérerSymbole
+    InsérerSymbole --> PropagerEntropie
+    PropagerEntropie --> VérifierComplétion
+    Rollback --> PropagerEntropie
 ```
+
+## Backtrack (Optimized)
+
+This solver implements an optimized version of the traditional backtracking algorithm with several performance enhancements including:
+- forward checking
+- most constrained variable selection
+- constraint propagation
+- caching
+
+1) **Find Most Constrained Cell**: The algorithm identifies the cell with the fewest possible valid values (Minimum Remaining Values heuristic). In case of ties, it selects the cell with more constraints.
+2) **Get Possible Values**: For the selected cell, determine all valid values that satisfy the Sudoku constraints, using a cache to avoid redundant calculations.
+3) **Try Values and Validate**:
+   - For each possible value, insert it into the cell
+   - Perform forward checking to ensure no neighboring cells are left with no valid options
+   - Propagate constraints by identifying and filling "hidden singles" (cells that have only one possible value)
+   - If the insertion is valid, recursively continue to the next most constrained cell
+4) **Handle Invalid States**:
+   - If a constraint violation is detected, rollback the last move
+   - If no valid values remain for a cell, backtrack to the previous decision
+6) **Repeat**: Continue until either a solution is found or all possibilities are exhausted
+
 
 ## Project structure
 ```

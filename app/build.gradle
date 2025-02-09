@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'java'
 }
 
 repositories {
@@ -23,6 +24,10 @@ dependencies {
 
     // This dependency is used by the application.
     implementation libs.guava
+
+    // Logger
+    implementation libs.slf4j.api
+    implementation libs.logback.classic
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -32,6 +37,12 @@ java {
     }
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+    options.memberLevel = JavadocMemberLevel.PRIVATE // includes private members
+    options.encoding = 'UTF-8'
+}
+
 application {
     // Define the main class for the application.
     mainClass = 'sudoku.Main'
@@ -39,6 +50,8 @@ application {
 
 run {
     standardInput = System.in
+    // Add logging level support
+    systemProperty "LOG_LEVEL", System.getProperty("LOG_LEVEL", "WARN")
 }
 
 tasks.named('test') {
@@ -51,6 +64,7 @@ task runGraphic(type: JavaExec) {
     description = "Runs the graphics application"
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'sudoku.graphic.MainGraphic'
+    systemProperty "LOG_LEVEL", System.getProperty("LOG_LEVEL", "WARN")
 }
 
 task runTerminal(type: JavaExec) {
@@ -59,5 +73,5 @@ task runTerminal(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'sudoku.terminal.MainTerminal'
     standardInput = System.in
-
+    systemProperty "LOG_LEVEL", System.getProperty("LOG_LEVEL", "WARN")
 }
