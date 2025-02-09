@@ -49,8 +49,8 @@ public class SudokuClassic extends Sudoku {
         return factors;
     }
 
-    public SudokuClassic(int size, Position offset) {
-        super(size, generateSymbols(size), offset);
+    public SudokuClassic(int size, Set<String> symbols, Position offset) {
+        super(size, symbols, offset);
         List<Integer> blockSize = primeFactors(size);
 
         for (int y = 0; y < size / blockSize.get(0); y++) {
@@ -70,12 +70,43 @@ public class SudokuClassic extends Sudoku {
         super.addColumnRules();
     }
 
+    public SudokuClassic(int size, Position offset) {
+        this(size, generateSymbols(size), offset);
+    }
+
     public SudokuClassic(int size, int offset) {
         this(size, new Position(offset));
     }
 
     public SudokuClassic(int size) {
         this(size, 0);
+    }
+
+    public SudokuClassic(Position ruleDim, Set<String> symbols, Position ruleNumber, Position offset) {
+        super(ruleDim.getX()*ruleNumber.getX(), symbols, offset);
+        if (ruleDim.getX()*ruleNumber.getX() != ruleDim.getY()*ruleNumber.getY()){
+            throw new IllegalArgumentException("The number of rows and columns must be equal");
+        }
+
+        for (int y = 0; y < ruleNumber.getY(); y++) {
+            for (int x = 0; x < ruleNumber.getX(); x++) {
+                super.add(
+                        new BlockRule(
+                                new Position(
+                                        x * ruleDim.getX(),
+                                        y * ruleDim.getY()),
+                                new Position(
+                                        (x + 1) * ruleDim.getX() - 1,
+                                        (y + 1) * ruleDim.getY() - 1)));
+            }
+        }
+
+        super.addRowRules();
+        super.addColumnRules();
+    }
+
+    public SudokuClassic(Position ruleDim, Position ruleNumber, Position offset){
+        this(ruleDim, generateSymbols(ruleDim.getX()*ruleNumber.getX()), ruleNumber, offset);
     }
 
     private static Set<String> generateSymbols(int size) {
