@@ -1,7 +1,8 @@
 package sudoku;
 
 import java.util.ArrayList;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import solvers.Solver;
 import solvers.backtrack.Backtrack;
 import solvers.backtrack.BacktrackOptimized;
@@ -9,6 +10,9 @@ import solvers.wfc.WaveFunctionCollapse;
 
 public class GenerateSudoku {
 
+    private static final Logger logger = LoggerFactory.getLogger(
+        GenerateSudoku.class
+    );
     private final Grid grid;
     private final double percentage;
     private Solver solver;
@@ -29,28 +33,30 @@ public class GenerateSudoku {
             case WFC -> new WaveFunctionCollapse(grid);
             case BACKTRACK -> new Backtrack(grid);
             case BACKTRACK_OPTIMIZED -> new BacktrackOptimized(grid);
-            default -> throw new IllegalArgumentException("Unknown solver type");
+            default -> throw new IllegalArgumentException(
+                "Unknown solver type"
+            );
         };
         long startTime = System.currentTimeMillis();
         solver.solve();
         long endTime = System.currentTimeMillis();
-        System.out.println("Total solve time: " + (endTime - startTime) + "ms");
+        logger.info("Total solve time: " + (endTime - startTime) + "ms");
         deleteRandomCells((int) (grid.getNbOfCellNotNull() * this.percentage));
-        solver.getGrid().print();
     }
 
     public void deleteRandomCells(int nbCells) {
-        System.out.println("Deleting " + nbCells + " cells");
+        logger.info("Deleting " + nbCells + " cells");
         ArrayList<Position> positions = new ArrayList<>();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
-                if (solver.getGrid().getCell(new Position(x, y)) != null
-                        && solver.getGrid().getSymbol(new Position(x, y)) != null)
-                    positions.add(new Position(x, y));
+                if (
+                    solver.getGrid().getCell(new Position(x, y)) != null &&
+                    solver.getGrid().getSymbol(new Position(x, y)) != null
+                ) positions.add(new Position(x, y));
             }
         }
         if (positions.isEmpty()) {
-            System.out.println("No positions available to delete.");
+            logger.warn("No positions available to delete.");
             return;
         }
         while (nbCells > 0 && !positions.isEmpty()) {
@@ -64,15 +70,16 @@ public class GenerateSudoku {
                 int nbSolution = solver.getNumberOfSolutions();
 
                 if (nbSolution > 1) {
-                    System.out.println("Multiple solutions");
+                    logger.debug("Multiple solutions");
                     solver.getGrid().insertSymbol(symbol, position);
                 } else {
-                    System.out.println("Deleting cell " + position + " with symbol " + symbol);
+                    logger.debug(
+                        "Deleting cell " + position + " with symbol " + symbol
+                    );
                     nbCells--;
                 }
             }
         }
-
     }
 
     public Grid getGrid() {
