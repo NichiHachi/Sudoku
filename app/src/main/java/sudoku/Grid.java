@@ -254,19 +254,20 @@ public class Grid {
     }
 
     public void playTerminal() {
-        Scanner scanner = new Scanner(System.in);
-        while (!this.isComplete()) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (!this.isComplete()) {
+                this.print();
+                System.out.print("Insert value: ");
+                String value = scanner.nextLine();
+                System.out.print("Place " + value + " here: ");
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                scanner.nextLine();
+                Position position = new Position(x, y);
+                this.insertSymbol(value, position);
+            }
             this.print();
-            System.out.print("Insert value: ");
-            String value = scanner.nextLine();
-            System.out.print("Place " + value + " here: ");
-            int x = scanner.nextInt();
-            int y = scanner.nextInt();
-            scanner.nextLine();
-            Position position = new Position(x, y);
-            this.insertSymbol(value, position);
         }
-        this.print();
     }
 
     public Set<String> getPossiblePlays(Position position) {
@@ -321,26 +322,7 @@ public class Grid {
         return result;
     }
 
-    private static String getColor(int ruleCount) {
-        String[] colors = {
-                "\u001B[38;5;231m", // White
-                "\u001B[38;5;226m", // Yellow
-                "\u001B[38;5;220m", // Light Orange
-                "\u001B[38;5;214m", // Orange
-                "\u001B[38;5;208m", // Dark Orange
-                "\u001B[38;5;202m", // Red-Orange
-                "\u001B[38;5;196m", // Red
-                "\u001B[38;5;201m", // Magenta
-                "\u001B[38;5;93m", // Light Purple
-                "\u001B[38;5;57m", // Purple
-                "\u001B[38;5;21m", // Blue
-                "\u001B[38;5;51m", // Cyan
-                "\u001B[38;5;46m", // Green
-                "\u001B[38;5;118m" // Light Green
-        };
-        return colors[ruleCount % colors.length];
-    }
-
+   
     public void setCell(Position position, Cell cell) {
         this.gridCell[position.getY()][position.getX()] = cell;
     }

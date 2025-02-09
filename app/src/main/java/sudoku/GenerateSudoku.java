@@ -9,8 +9,8 @@ import solvers.wfc.WaveFunctionCollapse;
 
 public class GenerateSudoku {
 
-    private Grid grid;
-    private double percentage;
+    private final Grid grid;
+    private final double percentage;
     private Solver solver;
 
     public GenerateSudoku(Grid grid, double percentage) {
