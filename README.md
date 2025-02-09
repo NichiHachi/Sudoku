@@ -77,27 +77,58 @@ This solver implements an optimized version of the traditional backtracking algo
 sudoku/
 │
 ├── README.md
-├── app/src
-│   ├── main/java/sudoku/
-│   │   ├── Grid.java
-│   │   ├── Cell.java
-│   │   ├── Constraint.java
-│   │   ├── Zone.java
-│   │   ├── Rule.java
-│   │   ├── Element.java
-│   │   └── Main.java
-│   │
-│   └── test/java/sudoku/
-│       ├── GridTest.java
-│       ├── CellTest.java
-│       ├── ConstraintTest.java
-│       ├── ZoneTest.java
-│       ├── RuleTest.java
-│       └── ElementTest.java
-│
 ├── build/
 ├── .gitignore
-└── LICENSE
+├── LICENSE
+└── app
+    └── src  
+        └── main  
+            └── java  
+                ├── solvers  
+                │   ├── backtrack  
+                │   │   ├── Backtrack.java  
+                │   │   ├── BacktrackOptimized.java  
+                │   ├── wfc  
+                │   │   ├── Entropy.java  
+                │   │   ├── WaveFunctionCollapse.java  
+                │   │   ├── Solver.java  
+                ├── sudoku  
+                │   ├── configuration  
+                │   │   ├── SudokuImporter.java  
+                │   │   ├── SudokuSaver.java  
+                │   ├── graphic  
+                │   │   ├── GridGraphic.java  
+                │   │   ├── MainGraphic.java  
+                │   ├── rule  
+                │   │   ├── BlockRule.java  
+                │   │   ├── ColumnRule.java  
+                │   │   ├── RowRule.java  
+                │   │   ├── Rule.java  
+                │   ├── sudoku  
+                │   │   ├── Sudoku.java  
+                │   │   ├── SudokuClassic.java  
+                │   ├── terminal  
+                │   │   ├── MainTerminal.java  
+                │   │   ├── PlayTerminal.java  
+                ├── Cell.java  
+                ├── GenerateSudoku.java  
+                ├── Grid.java  
+                ├── Main.java  
+                └── Position.java  
+            test  
+            └── java  
+                └── sudoku  
+                    ├── rules  
+                    │   ├── BlockRuleTest.java  
+                    │   ├── ColumnRuleTest.java  
+                    │   ├── RowRuleTest.java  
+                    │   ├── RuleTest.java  
+                    ├── sudokus  
+                    │   ├── SudokuClassicTest.java  
+                    │   ├── SudokuTest.java  
+                    ├── CellTest.java  
+                    ├── GridTest.java  
+                    ├── PositionTest.java 
 ```
 
 ```mermaid
