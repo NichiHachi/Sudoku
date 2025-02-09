@@ -70,6 +70,46 @@ public class SudokuClassic extends Sudoku {
         super.addColumnRules();
     }
 
+    public SudokuClassic(int size, Position offset, boolean randomBlock) {
+        super(size, generateSymbols(size), offset);
+        List<Integer> blockSize = primeFactors(size);
+
+        if (randomBlock) {
+            List<Position> blockList = new ArrayList<>();
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    blockList.add(new Position(x, y));
+                }
+            }
+
+            for (int y = 0; y < size; y++) {
+                Set<Position> block = new HashSet<>();
+                for (int x = 0; x < size; x++) {
+                    int id = (int) (Math.random() * blockList.size());
+                    block.add(blockList.remove(id));
+                }
+                System.out.println(block);
+                super.add(new BlockRule(block));
+            }
+
+        } else {
+            for (int y = 0; y < size / blockSize.get(0); y++) {
+                for (int x = 0; x < size / blockSize.get(1); x++) {
+                    super.add(
+                            new BlockRule(
+                                    new Position(
+                                            x * blockSize.get(1),
+                                            y * blockSize.get(0)),
+                                    new Position(
+                                            (x + 1) * blockSize.get(1) - 1,
+                                            (y + 1) * blockSize.get(0) - 1)));
+                }
+            }
+        }
+        super.addColumnRules();
+        super.addRowRules();
+    }
+
     public SudokuClassic(int size, Position offset) {
         this(size, generateSymbols(size), offset);
     }
@@ -87,8 +127,8 @@ public class SudokuClassic extends Sudoku {
     }
 
     public SudokuClassic(Position ruleDim, Set<String> symbols, Position ruleNumber, Position offset) {
-        super(ruleDim.getX()*ruleNumber.getX(), symbols, offset);
-        if (ruleDim.getX()*ruleNumber.getX() != ruleDim.getY()*ruleNumber.getY()){
+        super(ruleDim.getX() * ruleNumber.getX(), symbols, offset);
+        if (ruleDim.getX() * ruleNumber.getX() != ruleDim.getY() * ruleNumber.getY()) {
             throw new IllegalArgumentException("The number of rows and columns must be equal");
         }
 
@@ -109,11 +149,11 @@ public class SudokuClassic extends Sudoku {
         super.addColumnRules();
     }
 
-    public SudokuClassic(Position ruleDim, Position ruleNumber, Position offset){
-        this(ruleDim, generateSymbols(ruleDim.getX()*ruleNumber.getX()), ruleNumber, offset);
+    public SudokuClassic(Position ruleDim, Position ruleNumber, Position offset) {
+        this(ruleDim, generateSymbols(ruleDim.getX() * ruleNumber.getX()), ruleNumber, offset);
     }
 
-    public SudokuClassic(Position ruleDim, Position ruleNumber){
+    public SudokuClassic(Position ruleDim, Position ruleNumber) {
         this(ruleDim, ruleNumber, new Position(0));
     }
 

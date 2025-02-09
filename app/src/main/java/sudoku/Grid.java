@@ -46,7 +46,7 @@ public class Grid {
         this.mergeSudokus(builder.sudokus, resizeVector);
         this.initCells();
         this.colors = new ArrayList<>(this.rules.size());
-        System.out.println(this.rules.size());
+        System.out.println("Rules :" + this.rules.size());
 
         this.initColors();
     }
@@ -325,7 +325,6 @@ public class Grid {
         return result;
     }
 
-   
     public void setCell(Position position, Cell cell) {
         this.gridCell[position.getY()][position.getX()] = cell;
     }
