@@ -3,6 +3,7 @@ package sudoku.terminal;
 import java.util.Scanner;
 
 import solvers.Solver;
+import solvers.backtrack.BacktrackOptimized;
 import solvers.wfc.WaveFunctionCollapse;
 import sudoku.GenerateSudoku;
 import sudoku.Grid;
@@ -159,7 +160,7 @@ public class PlayTerminal {
         switch (solverChoice) {
             case 1 -> this.solver = new WaveFunctionCollapse(this.grid);
             case 2 -> {
-                // this.solver = new Backtracking(this.grid);
+                this.solver = new BacktrackOptimized(this.grid);
             }
             default -> {
                 System.out.println("Option invalide. Veuillez réessayer.");
