@@ -7,11 +7,15 @@ Bulid the project :
 
 Run the project :
 ```bash
-./gradlew run --console=plain -q
 ./gradlew runGraphic // Run the project in a graphical interface without any prints
 ./gradlew runGraphic --args="--info" // Run the project in a graphical interface with minimal information
 ./gradlew runGraphic --args="--debug" // Run the project in a graphical interface with steps by steps prints
 ./gradlew runTerminal --console=plain -q // Run the project in a terminal
+```
+
+Documentation :
+```bash
+./gradlew javadoc
 ```
 
 ## Wave Function Collapse
@@ -49,7 +53,11 @@ stateDiagram-v2
 
 ## Backtrack (Optimized)
 
-This solver implements an optimized version of the traditional backtracking algorithm with several performance enhancements including forward checking, most constrained variable selection, and constraint propagation.
+This solver implements an optimized version of the traditional backtracking algorithm with several performance enhancements including:
+- forward checking
+- most constrained variable selection
+- constraint propagation
+- caching
 
 1) **Find Most Constrained Cell**: The algorithm identifies the cell with the fewest possible valid values (Minimum Remaining Values heuristic). In case of ties, it selects the cell with more constraints.
 2) **Get Possible Values**: For the selected cell, determine all valid values that satisfy the Sudoku constraints, using a cache to avoid redundant calculations.

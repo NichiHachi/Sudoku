@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'java'
 }
 
 repositories {
@@ -34,6 +35,12 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.memberLevel = JavadocMemberLevel.PRIVATE // includes private members
+    options.encoding = 'UTF-8'
 }
 
 application {

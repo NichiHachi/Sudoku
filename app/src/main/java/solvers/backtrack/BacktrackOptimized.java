@@ -15,6 +15,21 @@ import sudoku.Position;
 import sudoku.rule.Rule;
 import utils.Colors;
 
+/**
+ * An optimized implementation of a backtracking Sudoku solver that uses several advanced techniques
+ * to improve performance over basic backtracking.
+ * <p>
+ * This solver implements the following optimization strategies:
+ * <ul>
+ *     <li>Minimum Remaining Values (MRV) heuristic to choose the most constrained cells first</li>
+ *     <li>Forward checking to detect failures early</li>
+ *     <li>Hidden singles propagation</li>
+ *     <li>Caching of possible values for cells</li>
+ * </ul>
+ * <p>
+ * The solver maintains a cache of possible values for each cell to avoid repeated calculations
+ * and implements constraint propagation through forward checking and hidden singles detection.
+ */
 public class BacktrackOptimized extends Solver {
 
     private static final Logger logger = LoggerFactory.getLogger(
@@ -24,6 +39,12 @@ public class BacktrackOptimized extends Solver {
     private int attempts = 0;
     private Map<Position, Set<String>> possibleValuesCache = new HashMap<>();
 
+    /**
+     * Constructs a new {@code BacktrackOptimized} solver for the given Sudoku grid.
+     *
+     * @param grid The Sudoku grid to be solved.
+     * @see Solver#Solver(Grid)
+     */
     public BacktrackOptimized(Grid grid) {
         super(grid);
         logger.info(
@@ -33,6 +54,12 @@ public class BacktrackOptimized extends Solver {
         );
     }
 
+    /**
+     * Solves the Sudoku puzzle using optimized backtracking with the MRV heuristic.
+     * <p>
+     * This method clears the {@code lastInserts} and {@code historyInserts} lists before initiating
+     * the backtracking process using the Minimum Remaining Values (MRV) heuristic.
+     */
     @Override
     public void solve() {
         this.lastInserts.clear();
@@ -48,6 +75,11 @@ public class BacktrackOptimized extends Solver {
         return solutions.size();
     }
 
+    /**
+     * Performs the optimized backtracking algorithm using the Minimum Remaining Values (MRV) heuristic.
+     *
+     * @return {@code true} if a solution is found, {@code false} otherwise.
+     */
     private boolean backtrackMinimumRemainingValues() {
         attempts++;
         logger.debug(Colors.INFO_COLOR + "Attempt #" + attempts + Colors.RESET);
@@ -150,6 +182,14 @@ public class BacktrackOptimized extends Solver {
         return false;
     }
 
+    /**
+     * Finds the most constrained cell in the grid using the MRV heuristic.
+     * <p>
+     * Chooses cells with the fewest possible valid values. In case of ties, it selects
+     * cells that are part of more constraints (rules).
+     *
+     * @return Position of the most constrained cell, or {@code null} if no empty cells remain.
+     */
     private Position findMostConstrainedCell() {
         Position mostConstrainedPos = null;
         int minPossibilities = Integer.MAX_VALUE;
@@ -203,6 +243,19 @@ public class BacktrackOptimized extends Solver {
         return mostConstrainedPos;
     }
 
+    /**
+     * Validates the current move and propagates constraints to related cells.
+     * <p>
+     * Implements a three-level constraint checking system:
+     * <ol>
+     *     <li>Forward checking</li>
+     *     <li>Naked pairs elimination (currently disabled)</li>
+     *     <li>Hidden singles propagation</li>
+     * </ol>
+     *
+     * @param currentPos The position of the current move to validate.
+     * @return {@code true} if the move is valid and constraint propagation succeeds, {@code false} otherwise.
+     */
     private boolean validateAndPropagate(Position currentPos) {
         // First level: Forward check the current position
         if (!isForwardCheckValid(currentPos)) {
@@ -255,6 +308,17 @@ public class BacktrackOptimized extends Solver {
         return true;
     }
 
+    /* Techniques */
+
+    /**
+     * Finds hidden singles related to the given position.
+     * <p>
+     * When a new position is updated in the grid, this method checks if affected cells have only one
+     * possible value left, which indicates a hidden single.
+     *
+     * @param currentPos The position to find hidden singles related to.
+     * @return A set of positions containing hidden singles.
+     */
     private Set<Position> findHiddenSingles(Position currentPos) {
         Set<Position> hiddenSinglesPositions = new HashSet<>();
 
@@ -277,6 +341,15 @@ public class BacktrackOptimized extends Solver {
         return hiddenSinglesPositions;
     }
 
+    /**
+     * Checks if forward checking is valid for a given position.
+     * <p>
+     * When a new position is updated in the grid, this method checks if any affected cells are left with no possible
+     * values. If so, the forward check fails, indicating an invalid state.
+     *
+     * @param currentPos The position to check forward check validity for.
+     * @return {@code true} if forward check is valid, {@code false} otherwise.
+     */
     private boolean isForwardCheckValid(Position currentPos) {
         for (int idRule : grid.getCell(currentPos).getIdRules()) {
             Rule rule = grid.getRule(idRule);
@@ -297,6 +370,15 @@ public class BacktrackOptimized extends Solver {
         return true;
     }
 
+    /**
+     * Eliminates naked pairs within a given rule.
+     * <p>
+     * This method identifies pairs of cells within a rule that have the same two possible values.
+     *
+     * @param rule The rule to apply naked pairs elimination to.
+     * @deprecated Naked pairs elimination is currently disabled as it is not efficient for small grids.
+     */
+    @Deprecated
     private void eliminateNakedPairs(Rule rule) {
         List<Position> unfilledPositions = rule
             .getRulePositions()
@@ -329,6 +411,11 @@ public class BacktrackOptimized extends Solver {
         }
     }
 
+    /**
+     * Rolls back the last move made on the grid and updates the history.
+     * <p>
+     * Invalidates the cache for the position that was rolled back and all related positions.
+     */
     @Override
     protected void rollBack() {
         if (this.lastInserts.isEmpty()) {
@@ -354,10 +441,31 @@ public class BacktrackOptimized extends Solver {
             .add(lastSymbolInserted);
     }
 
+    /* Helper methods */
+
+    /**
+     * Retrieves the possible values for a given position, using the cache if available.
+     * <p>
+     * If the possible values for the position are not found in the cache, they are calculated using
+     * {@link #getPossiblePlays(Position)} and then stored in the cache for future use.
+     *
+     * @param pos The position to retrieve possible values for.
+     * @return The set of possible values for the given position.
+     * @see #getPossiblePlays(Position)
+     */
     private Set<String> getPossiblePlaysWithCache(Position pos) {
         return possibleValuesCache.computeIfAbsent(pos, this::getPossiblePlays);
     }
 
+    /**
+     * Invalidates the cache for a given position and all related positions.
+     * <p>
+     * This method removes the cached possible values for the specified position and all other positions
+     * that are in the same rules as the given position. This ensures that the cache is consistent
+     * with the current state of the Sudoku grid after a change.
+     *
+     * @param pos The position to invalidate the cache for.
+     */
     private void invalidateCache(Position pos) {
         possibleValuesCache.remove(pos);
         Set<Position> invalidatedPositions = new HashSet<>();
