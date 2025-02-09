@@ -17,6 +17,7 @@ import solvers.wfc.WaveFunctionCollapse;
 import sudoku.GenerateSudoku;
 import sudoku.Grid;
 import sudoku.Position;
+import sudoku.configuration.SudokuImporter;
 import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 import sudoku.sudoku.SudokuClassic;
@@ -257,6 +258,27 @@ public class GridGraphic {
                     }
                 });
         frame.add(generateButton);
+
+        javax.swing.JButton importButton = new javax.swing.JButton("Importer");
+        importButton.setBounds(frame.getWidth() - 300, 350, 200, 50);
+        importButton.addActionListener(
+                new java.awt.event.ActionListener() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        String filename = JOptionPane.showInputDialog(
+                                frame,
+                                "Entrez le PATH du fichier à importer:");
+                        if (filename == null) {
+                            System.out.println("Action annulée par l'utilisateur.");
+                            return;
+                        }
+                        grid = SudokuImporter.importFromFile(filename);
+                        calculateStartCoordinates();
+                        initializeColors();
+                        draw();
+                    }
+                });
+        frame.add(importButton);
 
         frame.revalidate();
         frame.repaint();
