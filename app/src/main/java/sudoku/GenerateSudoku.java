@@ -10,32 +10,50 @@ import solvers.backtrack.Backtrack;
 import solvers.backtrack.BacktrackOptimized;
 import solvers.wfc.WaveFunctionCollapse;
 
+/**
+ * This class is responsible for generating a Sudoku puzzle.
+ * It uses different solving algorithms to generate a complete Sudoku grid
+ * and then removes a certain percentage of cells to create the puzzle.
+ */
 public class GenerateSudoku {
 
-    private static final Logger logger = LoggerFactory.getLogger(
-            GenerateSudoku.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenerateSudoku.class);
     private final Grid grid;
     private final double percentage;
     private Solver solver;
 
+    /**
+     * Constructs a GenerateSudoku instance with the specified grid and percentage
+     * of cells to remove.
+     *
+     * @param grid       the initial Sudoku grid
+     * @param percentage the percentage of cells to remove to create the puzzle
+     */
     public GenerateSudoku(Grid grid, double percentage) {
         this.grid = grid;
         this.percentage = percentage;
     }
 
+    /**
+     * Enum representing the different types of solvers available.
+     */
     public enum SolverType {
         WFC,
         BACKTRACK,
         BACKTRACK_OPTIMIZED,
     }
 
+    /**
+     * Generates a Sudoku puzzle using the specified solver type.
+     *
+     * @param solverType the type of solver to use for generating the Sudoku puzzle
+     */
     public void generateSudoku(SolverType solverType) {
         solver = switch (solverType) {
             case WFC -> new WaveFunctionCollapse(grid);
             case BACKTRACK -> new Backtrack(grid);
             case BACKTRACK_OPTIMIZED -> new BacktrackOptimized(grid);
-            default -> throw new IllegalArgumentException(
-                    "Unknown solver type");
+            default -> throw new IllegalArgumentException("Unknown solver type");
         };
         long startTime = System.currentTimeMillis();
         solver.solve();
@@ -47,6 +65,11 @@ public class GenerateSudoku {
         deleteRandomCells((int) (grid.getNbOfCellNotNull() * this.percentage));
     }
 
+    /**
+     * Deletes a specified number of cells randomly from the grid.
+     *
+     * @param nbCells the number of cells to delete
+     */
     public void deleteRandomCells(int nbCells) {
         logger.info("Deleting " + nbCells + " cells");
         ArrayList<Position> positions = new ArrayList<>();
@@ -75,15 +98,16 @@ public class GenerateSudoku {
                     logger.debug("Multiple solutions");
                     solver.getGrid().insertSymbol(symbol, position);
                 } else {
-                    logger.debug(
-                            "Deleting cell " + position + " with symbol " + symbol);
+                    logger.debug("Deleting cell " + position + " with symbol " + symbol);
                     nbCells--;
                 }
             }
         }
-
     }
 
+    /**
+     * Switches random cases in the grid to ensure randomness.
+     */
     public void switchRandomCase() {
         System.out.println("Switching random cases");
         ArrayList<Position> switchedPositions = new ArrayList<>();
@@ -129,6 +153,12 @@ public class GenerateSudoku {
         }
     }
 
+    /**
+     * Finds a case with the same symbol as the given position.
+     *
+     * @param position the position to find a matching case for
+     * @return a position with the same symbol, or null if none found
+     */
     public Position findCaseWithSameSymbol(Position position) {
         String symbol = grid.getSymbol(position);
         ArrayList<Position> positions = new ArrayList<>();
@@ -147,6 +177,11 @@ public class GenerateSudoku {
         return positions.get(randomIndex);
     }
 
+    /**
+     * Gets the current Sudoku grid.
+     *
+     * @return the current grid
+     */
     public Grid getGrid() {
         return grid;
     }

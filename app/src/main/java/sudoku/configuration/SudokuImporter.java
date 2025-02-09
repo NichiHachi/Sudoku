@@ -12,8 +12,18 @@ import sudoku.Grid;
 import sudoku.Position;
 import sudoku.rule.Rule;
 
+/**
+ * The SudokuImporter class provides functionality to import a Sudoku grid from
+ * a file.
+ */
 public class SudokuImporter {
 
+    /**
+     * Imports a Sudoku grid from a file with the specified filename.
+     *
+     * @param filename the name of the file to import the grid from
+     * @return the imported Sudoku grid
+     */
     public static Grid importFromFile(String filename) {
         Grid grid = null;
         ArrayList<Rule> rules = new ArrayList<>();

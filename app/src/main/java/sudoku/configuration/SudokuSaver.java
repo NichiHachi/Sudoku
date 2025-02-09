@@ -11,7 +11,17 @@ import sudoku.Grid;
 import sudoku.Position;
 import sudoku.rule.Rule;
 
+/**
+ * The SudokuSaver class provides functionality to save a Sudoku grid to a file.
+ */
 public class SudokuSaver {
+
+    /**
+     * Saves the given Sudoku grid to a file with the specified filename.
+     *
+     * @param grid     the Sudoku grid to save
+     * @param filename the name of the file to save the grid to
+     */
     public static void save(Grid grid, String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write("Size: " + grid.getSize().getX() + "x" + grid.getSize().getY() + "\n");

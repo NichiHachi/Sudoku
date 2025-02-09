@@ -22,6 +22,10 @@ import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 import sudoku.sudoku.SudokuClassic;
 
+/**
+ * The GridGraphic class provides a graphical interface for displaying and
+ * interacting with a Sudoku grid.
+ */
 public class GridGraphic {
     private Grid grid;
     private ArrayList<java.awt.Color> colors;
@@ -32,11 +36,19 @@ public class GridGraphic {
     private int clickedX = -1;
     private int clickedY = -1;
 
+    /**
+     * Constructs a GridGraphic with the specified grid.
+     *
+     * @param grid the Sudoku grid to display
+     */
     public GridGraphic(Grid grid) {
         this.grid = grid;
         initializeColors();
     }
 
+    /**
+     * Initializes the graphical interface.
+     */
     public void init() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -55,6 +67,9 @@ public class GridGraphic {
         frame.setVisible(true);
     }
 
+    /**
+     * Calculates the starting coordinates for drawing the grid.
+     */
     private void calculateStartCoordinates() {
 
         this.cellSize = (110 * 9) /
@@ -68,6 +83,9 @@ public class GridGraphic {
         this.startY = (frameHeight - gridHeight) / 2;
     }
 
+    /**
+     * Initializes the colors for the grid cells based on the rules.
+     */
     private void initializeColors() {
         this.colors = new ArrayList<>();
         for (Rule rule : this.grid.getRules()) {
@@ -81,6 +99,9 @@ public class GridGraphic {
         }
     }
 
+    /**
+     * Adds buttons for solving the Sudoku grid using different algorithms.
+     */
     private void addSolveButtons() {
         javax.swing.JButton solveButton = new javax.swing.JButton("WFC");
         solveButton.setBounds(frame.getWidth() - 300, 150, 200, 50);
@@ -142,6 +163,9 @@ public class GridGraphic {
 
     private volatile boolean isVisualizing = false;
 
+    /**
+     * Starts the visualization of the solving process.
+     */
     private void startVisualization() {
         isVisualizing = true;
         new Thread(() -> {
@@ -172,12 +196,17 @@ public class GridGraphic {
         }).start();
     }
 
+    /**
+     * Stops the visualization of the solving process.
+     */
     private void stopVisualization() {
         isVisualizing = false;
     }
 
+    /**
+     * Draws the entire grid.
+     */
     public void draw() {
-        // this.grid.print();
         frame.getContentPane().removeAll();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
@@ -289,6 +318,13 @@ public class GridGraphic {
         frame.repaint();
     }
 
+    /**
+     * Draws a single cell in the grid.
+     *
+     * @param x     the x-coordinate of the cell
+     * @param y     the y-coordinate of the cell
+     * @param value the value to display in the cell
+     */
     public void drawCell(int x, int y, String value) {
         JPanel cell = new JPanel();
         cell.setBounds(
