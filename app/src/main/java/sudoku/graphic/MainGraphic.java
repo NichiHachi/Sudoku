@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import solvers.Solver;
+import solvers.backtrack.BacktrackOptimized;
+import solvers.backtrack.Backtrack;
 import solvers.wfc.WaveFunctionCollapse;
 import sudoku.GenerateSudoku;
 import sudoku.Grid;
@@ -17,6 +19,7 @@ import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
 import sudoku.sudoku.Sudoku;
 import sudoku.sudoku.SudokuClassic;
+import javax.swing.SwingUtilities;
 
 public class MainGraphic {
 
@@ -36,20 +39,24 @@ public class MainGraphic {
 
     public static void main(String[] args) {
         Grid grid = new Grid.Builder()
-                .addSudoku(new SudokuClassic(2, new Position(5, 0)))
+                .addSudoku(new SudokuClassic(16, new Position(-12, 0)))
+                .addSudoku(new SudokuClassic(16, new Position(0, -12)))
+                .addSudoku(new SudokuClassic(16, new Position(12, 0)))
+                .addSudoku(new SudokuClassic(16, new Position(0, 12)))
                 .build();
-        grid.print();
-        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.7);
+        // grid.print();
+        // GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.9);
 
-        sudokuGenerator.generateSudoku();
+        // sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
 
-        grid = sudokuGenerator.getGrid();
+        // grid = sudokuGenerator.getGrid();
 
-        Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
-        GenerateSudoku sudokuGenerator2 = new GenerateSudoku(grid2, 0.7);
-        sudokuGenerator2.generateSudoku();
-        grid2 = sudokuGenerator2.getGrid();
-        MainGraphic main = new MainGraphic(grid2);
+        // Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
+        // GenerateSudoku sudokuGenerator2 = new GenerateSudoku(grid2, 0.7);
+        // sudokuGenerator2.generateSudoku();
+        // grid2 = sudokuGenerator2.getGrid();
+
+        MainGraphic main = new MainGraphic(grid);
         main.init();
     }
 
@@ -96,8 +103,103 @@ public class MainGraphic {
         }
     }
 
+    private void addSolveButtons() {
+        javax.swing.JButton solveButton = new javax.swing.JButton("WFC");
+        solveButton.setBounds(frame.getWidth() - 300, 150, 200, 50);
+        solveButton.addActionListener(e -> {
+            solveButton.setEnabled(false);
+            new Thread(() -> {
+                Solver solver = new WaveFunctionCollapse(grid);
+                startVisualization();
+                solver.solve();
+
+                // Ensure final state is shown
+                SwingUtilities.invokeLater(() -> {
+                    draw(); // Force one final update
+                    stopVisualization();
+                    solveButton.setEnabled(true);
+                });
+            }).start();
+        });
+        frame.add(solveButton);
+
+        javax.swing.JButton solveButtonBacktrack = new javax.swing.JButton("Backtrack");
+        solveButtonBacktrack.setBounds(frame.getWidth() - 300, 200, 200, 50);
+        solveButtonBacktrack.addActionListener(e -> {
+            solveButtonBacktrack.setEnabled(false);
+            new Thread(() -> {
+                Solver solver = new Backtrack(grid);
+                startVisualization();
+                solver.solve();
+
+                // Ensure final state is shown
+                SwingUtilities.invokeLater(() -> {
+                    draw(); // Force one final update
+                    stopVisualization();
+                    solveButtonBacktrack.setEnabled(true);
+                });
+            }).start();
+        });
+        frame.add(solveButtonBacktrack);
+
+        javax.swing.JButton solveButtonBacktrackOptimized = new javax.swing.JButton("Backtrack Optimized");
+        solveButtonBacktrackOptimized.setBounds(frame.getWidth() - 300, 250, 200, 50);
+        solveButtonBacktrackOptimized.addActionListener(e -> {
+            solveButtonBacktrackOptimized.setEnabled(false);
+            new Thread(() -> {
+                Solver solver = new BacktrackOptimized(grid);
+                startVisualization();
+                solver.solve();
+
+                // Ensure final state is shown
+                SwingUtilities.invokeLater(() -> {
+                    draw(); // Force one final update
+                    stopVisualization();
+                    solveButtonBacktrackOptimized.setEnabled(true);
+                });
+            }).start();
+        });
+        frame.add(solveButtonBacktrackOptimized);
+    }
+
+    private volatile boolean isVisualizing = false;
+
+    private void startVisualization() {
+        isVisualizing = true;
+        new Thread(() -> {
+            while (isVisualizing) {
+                // Update UI on EDT
+                SwingUtilities.invokeLater(() -> {
+                    frame.getContentPane().removeAll();
+                    for (int x = 0; x < grid.getSize().getX(); x++) {
+                        for (int y = 0; y < grid.getSize().getY(); y++) {
+                            if (grid.getCell(new Position(x, y)) != null) {
+                                String value = grid.getSymbol(new Position(x, y));
+                                drawCell(x, y, value);
+                            }
+                        }
+                    }
+                    addSolveButtons();
+                    frame.revalidate();
+                    frame.repaint();
+                });
+
+                try {
+                    Thread.sleep(100); // Adjust refresh rate
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }).start();
+    }
+
+    private void stopVisualization() {
+        isVisualizing = false;
+    }
+
     public void draw() {
-        this.grid.print();
+        // this.grid.print();
         frame.getContentPane().removeAll();
         for (int x = 0; x < grid.getSize().getX(); x++) {
             for (int y = 0; y < grid.getSize().getY(); y++) {
@@ -108,47 +210,7 @@ public class MainGraphic {
             }
         }
 
-        // Add solve button
-        javax.swing.JButton solveButton = new javax.swing.JButton("Résoudre");
-        solveButton.setBounds(frame.getWidth() - 150, 50, 100, 50);
-        solveButton.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        Solver solver = new WaveFunctionCollapse(grid);
-                        solver.solve();
-                        draw();
-                    }
-                });
-        frame.add(solveButton);
-
-        javax.swing.JButton generateButton = new javax.swing.JButton("Générer");
-        generateButton.setBounds(frame.getWidth() - 150, 110, 100, 50);
-        generateButton.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        String gridSizeStr = JOptionPane.showInputDialog(
-                                frame,
-                                "Entrez la taille de la grille:");
-                        String multipleSudokuStr = JOptionPane.showInputDialog(
-                                frame,
-                                "Y a-t-il plusieurs Sudoku? (oui/non):");
-
-                        int gridSize = Integer.parseInt(gridSizeStr);
-                        System.out.println(multipleSudokuStr);
-                        boolean multipleSudoku = multipleSudokuStr.equalsIgnoreCase(
-                                "oui");
-                        System.out.println("Multiple Sudoku: " + multipleSudoku);
-                        String[] values = new String[gridSize];
-                        for (int i = 0; i < gridSize; i++) {
-                            values[i] = String.valueOf(i + 1);
-                        }
-
-                        draw();
-                    }
-                });
-        frame.add(generateButton);
+        addSolveButtons();
 
         frame.revalidate();
         frame.repaint();

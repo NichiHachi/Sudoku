@@ -11,6 +11,16 @@ import sudoku.rule.BlockRule;
 public class SudokuClassic extends Sudoku {
 
     public static List<Integer> primeFactors(int number) {
+        // First try to find perfect square factors
+        int sqrt = (int) Math.sqrt(number);
+        if (sqrt * sqrt == number) {
+            List<Integer> factors = new ArrayList<>();
+            factors.add(sqrt);
+            factors.add(sqrt);
+            return factors;
+        }
+
+        // Fall back to prime factorization if not a perfect square
         List<Integer> factors = new ArrayList<>();
         for (int i = 2; i <= Math.sqrt(number); i++) {
             while (number % i == 0) {
@@ -36,7 +46,6 @@ public class SudokuClassic extends Sudoku {
             factors.set(0, factors.get(1));
             factors.set(1, temp);
         }
-        System.out.println("Factors: " + factors);
         return factors;
     }
 

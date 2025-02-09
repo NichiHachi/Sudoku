@@ -3,6 +3,8 @@ package sudoku;
 import java.util.ArrayList;
 
 import solvers.Solver;
+import solvers.backtrack.BacktrackOptimized;
+import solvers.backtrack.Backtrack;
 import solvers.wfc.WaveFunctionCollapse;
 
 public class GenerateSudoku {
@@ -16,9 +18,30 @@ public class GenerateSudoku {
         this.percentage = percentage;
     }
 
-    public void generateSudoku() {
-        solver = new WaveFunctionCollapse(grid);
+    public enum SolverType {
+        WFC,
+        BACKTRACK,
+        BACKTRACK_OPTIMIZED,
+    }
+
+    public void generateSudoku(SolverType solverType) {
+        switch (solverType) {
+            case WFC:
+                solver = new WaveFunctionCollapse(grid);
+                break;
+            case BACKTRACK:
+                solver = new Backtrack(grid);
+                break;
+            case BACKTRACK_OPTIMIZED:
+                solver = new BacktrackOptimized(grid);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown solver type");
+        }
+        long startTime = System.currentTimeMillis();
         solver.solve();
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total solve time: " + (endTime - startTime) + "ms");
         deleteRandomCells((int) (grid.getSize().getX() * grid.getSize().getY() * this.percentage));
         solver.getGrid().print();
     }
