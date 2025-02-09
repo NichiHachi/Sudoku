@@ -61,7 +61,7 @@ public class PlayTerminal {
                 }
             }
             GenerateSudoku generator = new GenerateSudoku(this.grid, difficulty);
-            generator.generateSudoku();
+            generator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
             this.grid = generator.getGrid();
             this.grid.print();
             System.out.println("Grille générée avec succès.");
@@ -127,7 +127,7 @@ public class PlayTerminal {
         }
 
         GenerateSudoku generator = new GenerateSudoku(this.grid, difficulty);
-        generator.generateSudoku();
+        generator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
         this.grid = generator.getGrid();
         System.out.println("Grille générée avec succès.");
         this.grid.print();

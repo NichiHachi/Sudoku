@@ -52,3 +52,10 @@ task runGraphic(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'sudoku.graphic.MainGraphic'
 }
+
+task runTerminal(type: JavaExec) {
+    group = "application"
+    description = "Runs the terminal application"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'sudoku.PlayTerminal'
+}
