@@ -10,7 +10,7 @@ public class Main {
 
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0);
 
-        sudokuGenerator.generateSudoku();
+        sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
 
         for (int i = 2; i <= 10; i++) {
             grid = new Grid.Builder()
@@ -19,7 +19,7 @@ public class Main {
 
             sudokuGenerator = new GenerateSudoku(grid, 0);
 
-            sudokuGenerator.generateSudoku();
+            sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
 
             SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + i + "*" + i + ".txt");
         }
