@@ -74,6 +74,10 @@ public class SudokuClassic extends Sudoku {
         this(size, generateSymbols(size), offset);
     }
 
+    public SudokuClassic(int size, Set<String> symbols) {
+        this(size, symbols, new Position(0));
+    }
+
     public SudokuClassic(int size, int offset) {
         this(size, new Position(offset));
     }
@@ -107,6 +111,10 @@ public class SudokuClassic extends Sudoku {
 
     public SudokuClassic(Position ruleDim, Position ruleNumber, Position offset){
         this(ruleDim, generateSymbols(ruleDim.getX()*ruleNumber.getX()), ruleNumber, offset);
+    }
+
+    public SudokuClassic(Position ruleDim, Position ruleNumber){
+        this(ruleDim, ruleNumber, new Position(0));
     }
 
     private static Set<String> generateSymbols(int size) {

@@ -216,6 +216,9 @@ public class Grid {
     }
 
     public void resetSymbol(Position position) {
+        if (!this.isInsideGrid(position)) {
+            System.err.println("[Grid] Reset outside of a Sudoku");
+        }
         this.getCell(position).resetSymbol();
     }
 

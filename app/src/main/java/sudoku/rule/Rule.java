@@ -9,7 +9,7 @@ public class Rule {
     private Set<Position> rulePositions;
     private int indexSymbols;
 
-    Rule(){
+    public Rule(){
         this.rulePositions = new HashSet<>();
     }
 
