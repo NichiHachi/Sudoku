@@ -59,7 +59,7 @@ public class PlayTerminal {
                     difficulty = scanner.nextDouble();
                     scanner.nextLine();
                     if (difficulty < 0.0 || difficulty > 1.0) {
-                        System.out.println("Veuillez entrer une valeur entre 0.0 et 1.0.");
+                        System.out.println("Veuillez entrer une valeur entre 0,0 et 1,0.");
                     }
                 } else {
                     System.out.println("Entrée invalide. Veuillez entrer un nombre décimal.");
@@ -78,12 +78,12 @@ public class PlayTerminal {
     private void generateGrids(Scanner scanner) {
         double difficulty = -1;
         while (difficulty < 0.0 || difficulty > 1.0) {
-            System.out.print("Entrez le niveau de difficulté (0.0 à 1.0): ");
+            System.out.print("Entrez le niveau de difficulté (0,0 à 1,0): ");
             if (scanner.hasNextDouble()) {
                 difficulty = scanner.nextDouble();
                 scanner.nextLine();
                 if (difficulty < 0.0 || difficulty > 1.0) {
-                    System.out.println("Veuillez entrer une valeur entre 0.0 et 1.0.");
+                    System.out.println("Veuillez entrer une valeur entre 0,0 et 1,0.");
                 }
             } else {
                 System.out.println("Entrée invalide. Veuillez entrer un nombre décimal.");
@@ -100,7 +100,10 @@ public class PlayTerminal {
                 System.out.print("Entrez la taille de la grille : ");
                 int size = scanner.nextInt();
                 scanner.nextLine();
-                this.grid = new Grid.Builder().addSudoku(new SudokuClassic(size)).build();
+                System.out.println("Est ce que la grille à des blocs aléatoires ? (O/N)");
+                String randomBlock = scanner.nextLine();
+                boolean random = randomBlock.equalsIgnoreCase("O");
+                this.grid = new Grid.Builder().addSudoku(new SudokuClassic(size, new Position(0), random)).build();
             }
             case 2 -> {
                 System.out.print("Entrez le nombre de grilles : ");
@@ -108,6 +111,9 @@ public class PlayTerminal {
                 scanner.nextLine();
                 Grid.Builder builder = new Grid.Builder();
                 for (int i = 0; i < size; i++) {
+                    System.out.println("Est ce que la grille à des blocs aléatoires ? (O/N)");
+                    String randomBlock = scanner.nextLine();
+                    boolean random = randomBlock.equalsIgnoreCase("O");
                     System.out.println("Entrer la taille de la grille " + (i + 1) + " : ");
                     int gridSize = scanner.nextInt();
                     scanner.nextLine();
@@ -117,7 +123,7 @@ public class PlayTerminal {
                     System.out.println("Entrer la position Y de la grille " + (i + 1) + " : ");
                     int offsetY = scanner.nextInt();
                     scanner.nextLine();
-                    builder.addSudoku(new SudokuClassic(gridSize, new Position(offsetX, offsetY)));
+                    builder.addSudoku(new SudokuClassic(gridSize, new Position(offsetX, offsetY), random));
                 }
                 this.grid = builder.build();
             }

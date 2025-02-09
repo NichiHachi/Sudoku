@@ -95,14 +95,30 @@ public class GenerateSudoku {
                     Cell cell = grid.getCell(position);
                     Cell cell2 = grid.getCell(position2);
                     if (cell != null && cell2 != null) {
-                        System.out.println("Switching " + position + " with " + position2);
-                        grid.setCell(position, cell2);
-                        grid.setCell(position2, cell);
-                        switchedPositions.add(position);
-                        switchedPositions.add(position2);
+                        String symbol = cell.getSymbol();
+                        String symbol2 = cell2.getSymbol();
+                        ArrayList<Integer> idRules = cell.getIdRules();
+                        ArrayList<Integer> idRules2 = cell2.getIdRules();
+
+                        for (int idRule : idRules) {
+                            grid.getRule(idRule).getRulePositions().remove(position);
+                            grid.getRule(idRule).getRulePositions().add(position2);
+                        }
+                        for (int idRule : idRules2) {
+                            grid.getRule(idRule).getRulePositions().remove(position2);
+                            grid.getRule(idRule).getRulePositions().add(position);
+                        }
+                        Cell newCell = new Cell(idRules2);
+                        Cell newCell2 = new Cell(idRules);
+                        newCell.insertSymbol(symbol);
+                        newCell2.insertSymbol(symbol2);
+                        grid.setCell(position, newCell);
+                        grid.setCell(position2, newCell2);
                     }
 
                 }
+
+                switchedPositions.add(position);
             }
         }
     }

@@ -1,5 +1,7 @@
 package sudoku;
 
+import solvers.Solver;
+import solvers.backtrack.BacktrackOptimized;
 import sudoku.sudoku.SudokuClassic;
 
 public class Main {
@@ -11,6 +13,12 @@ public class Main {
 
         GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
         sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.BACKTRACK_OPTIMIZED);
+
+        grid = sudokuGenerator.getGrid();
+
+        Solver solver = new BacktrackOptimized(grid);
+        solver.solve();
+        solver.getGrid().print();
 
     }
 }

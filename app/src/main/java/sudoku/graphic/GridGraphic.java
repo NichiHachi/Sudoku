@@ -241,9 +241,13 @@ public class GridGraphic {
                                     frame,
                                     "Entrez la taille de la grille:");
                             int gridSize = Integer.parseInt(gridSizeStr);
+                            String randomBlocStr = JOptionPane.showInputDialog(
+                                    frame,
+                                    "Est-ce que la grille à des blocs aléatoires? (oui/non):");
+                            boolean randomBloc = randomBlocStr.equalsIgnoreCase("oui");
 
                             grid = new Grid.Builder()
-                                    .addSudoku(new SudokuClassic(gridSize, new Position(0, 0), true))
+                                    .addSudoku(new SudokuClassic(gridSize, new Position(0, 0), randomBloc))
                                     .build();
                         }
 
