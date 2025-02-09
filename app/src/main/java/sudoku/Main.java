@@ -12,7 +12,7 @@ public class Main {
 
         sudokuGenerator.generateSudoku(GenerateSudoku.SolverType.WFC);
 
-        for (int i = 2; i <= 10; i++) {
+        for (int i = 2; i <= 0; i++) {
             grid = new Grid.Builder()
                     .addSudoku(new SudokuClassic(i))
                     .build();
@@ -24,7 +24,8 @@ public class Main {
             SudokuSaver.save(grid, "./src/main/java/sudokuSaved/sudoku" + i + "*" + i + ".txt");
         }
 
-        Grid grid2 = SudokuImporter.importFromFile("sudoku.txt");
-        grid2.print();
+        // Grid grid2 =
+        // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku2*2.txt");
+        // grid2.print();
     }
 }

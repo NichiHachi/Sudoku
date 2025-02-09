@@ -1,12 +1,14 @@
 package sudoku.graphic;
 
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
 import solvers.Solver;
 import solvers.backtrack.BacktrackOptimized;
 import solvers.backtrack.Backtrack;
@@ -17,7 +19,6 @@ import sudoku.Position;
 import sudoku.SudokuImporter;
 import sudoku.rule.BlockRule;
 import sudoku.rule.Rule;
-import sudoku.sudoku.Sudoku;
 import sudoku.sudoku.SudokuClassic;
 import javax.swing.SwingUtilities;
 
@@ -51,7 +52,8 @@ public class MainGraphic {
 
         // grid = sudokuGenerator.getGrid();
 
-        // Grid grid2 = SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
+        // Grid grid2 =
+        // SudokuImporter.importFromFile("./src/main/java/sudokuSaved/sudoku4*4.txt");
         // GenerateSudoku sudokuGenerator2 = new GenerateSudoku(grid2, 0.7);
         // sudokuGenerator2.generateSudoku();
         // grid2 = sudokuGenerator2.getGrid();
@@ -79,15 +81,29 @@ public class MainGraphic {
     }
 
     private void calculateStartCoordinates() {
+
+        this.cellSize = (110 * 9) /
+                Math.max(this.grid.getSize().getX(), this.grid.getSize().getY());
         int frameWidth = frame.getWidth();
         int frameHeight = frame.getHeight();
         int gridWidth = this.grid.getSize().getX() * cellSize;
         int gridHeight = this.grid.getSize().getY() * cellSize;
 
-        this.cellSize = (110 * 9) /
-                Math.max(this.grid.getSize().getX(), this.grid.getSize().getY());
+        System.out.println("Cell: " + cellSize);
+
+        System.out.println("Frame width: " + frameWidth);
+        System.out.println("Frame height: " + frameHeight);
+        System.out.println("Grid width: " + this.grid.getSize().getX());
+        System.out.println("Grid height: " + this.grid.getSize().getY());
+        System.out.println("Grid width: " + gridWidth);
+        System.out.println("Grid height: " + gridHeight);
+
         this.startX = (frameWidth - gridWidth) / 2;
         this.startY = (frameHeight - gridHeight) / 2;
+
+        System.out.println("Cell size: " + this.cellSize);
+        System.out.println("Start X: " + this.startX);
+        System.out.println("Start Y: " + this.startY);
     }
 
     private void initializeColors() {
@@ -211,6 +227,71 @@ public class MainGraphic {
         }
 
         addSolveButtons();
+
+        javax.swing.JButton generateButton = new javax.swing.JButton("Générer");
+        generateButton.setBounds(frame.getWidth() - 150, 110, 100, 50);
+        generateButton.addActionListener(
+                new java.awt.event.ActionListener() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                        String multipleSudokuStr = JOptionPane.showInputDialog(
+                                frame,
+                                "Y a-t-il plusieurs Sudoku? (oui/non):");
+
+                        System.out.println(multipleSudokuStr);
+                        boolean multipleSudoku = multipleSudokuStr.equalsIgnoreCase(
+                                "oui");
+                        System.out.println("Multiple Sudoku: " + multipleSudoku);
+                        if (multipleSudoku) {
+                            String nbSudoku = JOptionPane.showInputDialog(
+                                    frame,
+                                    "Entrez le nombre de Sudoku:");
+                            Grid.Builder builder = new Grid.Builder();
+                            int nb = Integer.parseInt(nbSudoku);
+                            for (int i = 0; i < nb; i++) {
+                                String gridSizeStr = JOptionPane.showInputDialog(
+                                        frame,
+                                        "Entrez la taille de la grille du Sudoku " + i + ":");
+                                int gridSize = Integer.parseInt(gridSizeStr);
+                                String positionXSudoku = JOptionPane.showInputDialog(
+                                        frame,
+                                        "Entrez la position X du Sudoku " + i + ":");
+                                String positionYSudoku = JOptionPane.showInputDialog(
+                                        frame,
+                                        "Entrez la position Y du Sudoku " + i + ":");
+                                builder.addSudoku(
+                                        new SudokuClassic(
+                                                gridSize,
+                                                new Position(
+                                                        Integer.parseInt(positionXSudoku),
+                                                        Integer.parseInt(positionYSudoku))));
+
+                            }
+                            grid = builder.build();
+
+                        } else {
+                            String gridSizeStr = JOptionPane.showInputDialog(
+                                    frame,
+                                    "Entrez la taille de la grille:");
+                            int gridSize = Integer.parseInt(gridSizeStr);
+
+                            grid = new Grid.Builder()
+                                    .addSudoku(new SudokuClassic(gridSize))
+                                    .build();
+                        }
+
+                        GenerateSudoku sudokuGenerator = new GenerateSudoku(grid, 0.5);
+                        sudokuGenerator.generateSudoku();
+                        grid = sudokuGenerator.getGrid();
+
+                        calculateStartCoordinates();
+                        initializeColors();
+
+                        draw();
+                    }
+                });
+        frame.add(generateButton);
 
         frame.revalidate();
         frame.repaint();
